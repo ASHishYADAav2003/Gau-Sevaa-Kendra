@@ -25,6 +25,10 @@ import AddExpense from "./pages/admin/expenses/AddExpense";
 import BlogsList from "./pages/admin/blogs/BlogsList";
 import AddBlog from "./pages/admin/blogs/AddBlog";
 import AdminNewsletter from "./pages/admin/AdminNewsletter";
+import VolunteersList from "./pages/admin/VolunteersList";
+import AdminGallery from "./pages/admin/AdminGallery";
+import DonationsList from "./pages/admin/DonationsList";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 export const router = createBrowserRouter([
   {
@@ -66,7 +70,10 @@ export const router = createBrowserRouter([
       { path: "blogs", Component: BlogsList },
       { path: "blogs/add", Component: AddBlog },
       { path: "newsletter", Component: AdminNewsletter },
-      // Other placeholders for future implementation
+      { path: "donations", Component: DonationsList },
+      { path: "volunteers", Component: VolunteersList },
+      { path: "gallery", Component: AdminGallery },
+      { path: "settings", Component: AdminSettings },
     ],
   },
 ]);

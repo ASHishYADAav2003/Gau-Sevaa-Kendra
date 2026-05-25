@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Users, Heart, Clock, CheckCircle, Loader2, AlertCircle } from "lucide-react";
+import { CheckCircle, Loader2, AlertCircle } from "lucide-react";
+import { submitVolunteer } from "../../lib/api";
 
 export default function Volunteer() {
   const [formData, setFormData] = useState({
@@ -61,18 +62,16 @@ export default function Volunteer() {
 
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const newVolunteer = {
-        id: Date.now(),
-        ...formData,
-        date: new Date().toISOString()
-      };
-      
-      const existingStr = localStorage.getItem('volunteers');
-      const existing = existingStr ? JSON.parse(existingStr) : [];
-      localStorage.setItem('volunteers', JSON.stringify([newVolunteer, ...existing]));
+      await submitVolunteer({
+        name: formData.name,
+        email: formData.email,
+        mobile: formData.mobile,
+        city: formData.city,
+        age: formData.age,
+        availability: formData.availability,
+        interests: formData.interests,
+        message: formData.message || undefined,
+      });
 
       setSubmitted(true);
       setFormData({

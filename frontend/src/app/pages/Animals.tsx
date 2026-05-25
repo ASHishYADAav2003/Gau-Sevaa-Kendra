@@ -13,7 +13,7 @@ export default function Animals() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/animals')
+    fetch('/api/animals')
       .then(res => res.json())
       .then(data => {
         setAnimals(data);

@@ -2,12 +2,14 @@ import { Outlet, Link, useLocation } from "react-router";
 import { Heart, Menu, X, Phone, Mail, MapPin, Languages, Lock } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
+import { useSettings, phoneToTel, whatsappLink } from "../context/SettingsContext";
 import NewsletterWidget from "./NewsletterWidget";
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
+  const { settings } = useSettings();
 
   const navLinks = [
     { path: "/", label: t('nav.home') },
@@ -28,19 +30,24 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {settings.maintenanceMode && (
+        <div className="bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium">
+          {settings.organizationName} is currently under scheduled maintenance. Some features may be limited.
+        </div>
+      )}
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         {/* Top Bar */}
         <div className="bg-orange-600 text-white py-2">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between text-sm">
             <div className="flex items-center gap-4">
-              <a href="tel:+916938574125" className="flex items-center gap-1 hover:text-orange-100">
+              <a href={`tel:${phoneToTel(settings.phone)}`} className="flex items-center gap-1 hover:text-orange-100">
                 <Phone className="w-4 h-4" />
-                <span className="hidden sm:inline">+91 6938574125</span>
+                <span className="hidden sm:inline">{settings.phone}</span>
               </a>
-              <a href="mailto:Gauseva@gmail.com" className="flex items-center gap-1 hover:text-orange-100">
+              <a href={`mailto:${settings.email}`} className="flex items-center gap-1 hover:text-orange-100">
                 <Mail className="w-4 h-4" />
-                <span className="hidden sm:inline">Gauseva@gmail.com</span>
+                <span className="hidden sm:inline">{settings.email}</span>
               </a>
             </div>
             <div className="flex items-center gap-2">
@@ -64,8 +71,8 @@ export default function Layout() {
                 <Heart className="w-6 h-6 text-orange-600 fill-orange-600" />
               </div>
               <div>
-                <div className="text-xl font-bold text-gray-900">Gau Seva Kendra</div>
-                <div className="text-xs text-gray-600">{t('header.tagline')}</div>
+                <div className="text-xl font-bold text-gray-900">{settings.organizationName}</div>
+                <div className="text-xs text-gray-600">{settings.tagline}</div>
               </div>
             </Link>
 
@@ -146,7 +153,7 @@ export default function Layout() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Heart className="w-6 h-6 text-orange-500 fill-orange-500" />
-                <span className="text-white font-bold">Gau Seva Kendra</span>
+                <span className="text-white font-bold">{settings.organizationName}</span>
               </div>
               <p className="text-sm text-gray-400">
                 {t('footer.about')}
@@ -170,15 +177,15 @@ export default function Layout() {
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
-                  <span>Village Rampur, District Mathura, Uttar Pradesh - 281001</span>
+                  <span>{settings.address}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
-                  <span>+91 6938574125</span>
+                  <span>{settings.phone}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  <span>Gauseva@gmail.com</span>
+                  <span>{settings.email}</span>
                 </li>
               </ul>
             </div>
@@ -199,7 +206,7 @@ export default function Layout() {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-sm text-gray-400 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>&copy; 2026 Gau Seva Kendra. {t('footer.copyright')}</p>
+            <p>&copy; 2026 {settings.organizationName}. {t('footer.copyright')}</p>
             <Link to="/admin/login" className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors">
               <Lock className="w-4 h-4" /> Admin Portal
             </Link>
@@ -209,7 +216,7 @@ export default function Layout() {
 
       {/* WhatsApp Float Button */}
       <a
-        href="https://wa.me/916938574125"
+        href={whatsappLink(settings.whatsapp)}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors z-40"

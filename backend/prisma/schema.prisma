@@ -57,3 +57,29 @@ model Contact {
   message        String
   createdAt      DateTime @default(now())
 }
+
+model GalleryImage {
+  id          String   @id @default(uuid())
+  title       String
+  imageUrl    String
+  category    String   @default("General")
+  caption     String?
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model SiteSettings {
+  id                 String   @id @default("default")
+  organizationName   String   @default("Gau Seva Kendra")
+  tagline            String   @default("गौ सेवा केंद्र")
+  phone              String   @default("+91 6938574125")
+  email              String   @default("Gauseva@gmail.com")
+  address            String   @default("Village Rampur, District Mathura, Uttar Pradesh - 281001")
+  whatsapp           String   @default("916938574125")
+  donationGoal       Float    @default(1000000)
+  monthlyBudget      Float    @default(850000)
+  showDonationTicker Boolean  @default(true)
+  maintenanceMode    Boolean  @default(false)
+  taxExemptionNote   String   @default("Donations eligible for 50% tax exemption under Section 80G")
+  updatedAt          DateTime @updatedAt
+}

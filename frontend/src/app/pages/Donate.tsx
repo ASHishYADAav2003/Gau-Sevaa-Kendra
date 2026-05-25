@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Heart, CreditCard, Smartphone, Building, CheckCircle, IndianRupee } from "lucide-react";
+import { Heart, CreditCard, Smartphone, Building, CheckCircle, IndianRupee, Loader2, AlertCircle } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import { useSettings } from "../context/SettingsContext";
+import { submitDonation } from "../../lib/api";
 
 export default function Donate() {
   const { t } = useLanguage();
+  const { settings } = useSettings();
   const [amount, setAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
   const [recurring, setRecurring] = useState(false);
@@ -15,42 +18,50 @@ export default function Donate() {
     panCard: "",
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const predefinedAmounts = [500, 1000, 2000, 5000, 10000];
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!paymentMethod) {
+      setError("Please select a payment method");
+      return;
+    }
+
+    const donationAmount = customAmount ? parseInt(customAmount, 10) : amount;
+    if (!donationAmount || donationAmount < 100) {
+      setError("Please enter a valid amount (minimum ₹100)");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
     try {
-      const response = await fetch('http://localhost:5000/api/donations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          donorName: donorInfo.name,
-          email: donorInfo.email,
-          phone: donorInfo.phone,
-          panCard: donorInfo.panCard,
-          amount: customAmount ? parseInt(customAmount) : amount,
-          paymentMethod: paymentMethod,
-          isRecurring: recurring
-        })
+      await submitDonation({
+        donorName: donorInfo.name,
+        email: donorInfo.email,
+        phone: donorInfo.phone,
+        panCard: donorInfo.panCard || undefined,
+        amount: donationAmount,
+        paymentMethod,
+        isRecurring: recurring,
       });
 
-      if (response.ok) {
-        setShowConfirmation(true);
-        setTimeout(() => {
-          setShowConfirmation(false);
-          setDonorInfo({ name: "", email: "", phone: "", panCard: "" });
-          setCustomAmount("");
-          setPaymentMethod(null);
-        }, 5000);
-      } else {
-        console.error("Donation failed");
-      }
-    } catch (error) {
-      console.error("Network error:", error);
+      setShowConfirmation(true);
+      setTimeout(() => {
+        setShowConfirmation(false);
+        setDonorInfo({ name: "", email: "", phone: "", panCard: "" });
+        setCustomAmount("");
+        setPaymentMethod(null);
+        setRecurring(false);
+      }, 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Donation failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,12 +98,18 @@ export default function Donate() {
               </p>
               <div className="bg-orange-50 p-6 rounded-lg">
                 <p className="text-sm text-gray-700">
-                  <strong>Tax Benefit:</strong> Your donation is eligible for 50% tax exemption under Section 80G of the Income Tax Act.
+                  <strong>Tax Benefit:</strong> {settings.taxExemptionNote}
                 </p>
               </div>
             </div>
           ) : (
             <form onSubmit={handleDonate}>
+              {error && (
+                <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Left Side - Donation Details */}
                 <div className="md:col-span-2 space-y-6">
@@ -324,10 +341,17 @@ export default function Donate() {
 
                     <button
                       type="submit"
-                      disabled={!paymentMethod || !donorInfo.name || !donorInfo.email || !donorInfo.phone}
-                      className="w-full bg-orange-600 text-white px-6 py-4 rounded-lg hover:bg-orange-700 transition-colors font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
+                      disabled={isLoading || !paymentMethod || !donorInfo.name || !donorInfo.email || !donorInfo.phone}
+                      className="w-full bg-orange-600 text-white px-6 py-4 rounded-lg hover:bg-orange-700 transition-colors font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      Complete Donation
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        t('donate.complete')
+                      )}
                     </button>
 
                     <div className="mt-6 text-xs text-gray-500 text-center">
@@ -338,7 +362,7 @@ export default function Donate() {
                     <div className="mt-6 p-4 bg-green-50 rounded-lg">
                       <p className="text-sm font-semibold text-green-800 mb-2">Tax Benefits</p>
                       <p className="text-xs text-green-700">
-                        Get 50% tax exemption under Section 80G. Certificate will be emailed automatically.
+                        {settings.taxExemptionNote}
                       </p>
                     </div>
 
