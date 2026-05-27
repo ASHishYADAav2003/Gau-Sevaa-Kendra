@@ -28,7 +28,7 @@ export default function App() {
             error: {
               style: {
                 background: '#FDECEA',
-                color: '#C62828',
+                color: '#c02b2bff',
                 border: '1px solid #FFCDD2',
               },
             },

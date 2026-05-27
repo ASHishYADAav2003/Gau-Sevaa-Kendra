@@ -44,7 +44,12 @@ export default function VolunteersList() {
   const fetchVolunteers = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/volunteers');
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch('/api/volunteers', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         const local = loadLocalVolunteers();
@@ -67,9 +72,13 @@ export default function VolunteersList() {
 
   const updateStatus = async (id: string, status: string) => {
     try {
+      const token = localStorage.getItem('adminToken');
       const res = await fetch(`/api/volunteers/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ status }),
       });
       if (res.ok) {
@@ -88,7 +97,13 @@ export default function VolunteersList() {
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Remove volunteer application from ${name}?`)) return;
     try {
-      await fetch(`/api/volunteers/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('adminToken');
+      await fetch(`/api/volunteers/${id}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
     } catch {
       /* local-only entry */
     }

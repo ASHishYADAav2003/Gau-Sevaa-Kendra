@@ -124,9 +124,13 @@ export default function AdminSettings() {
     e.preventDefault();
     setIsSaving(true);
     try {
+      const token = localStorage.getItem('adminToken');
       const res = await fetch('/api/settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(settings),
       });
       if (res.ok) {

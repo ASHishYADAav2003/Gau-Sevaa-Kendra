@@ -74,7 +74,12 @@ export default function AdminGallery() {
   const fetchGallery = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/gallery');
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch('/api/gallery', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.length > 0) {
@@ -109,9 +114,13 @@ export default function AdminGallery() {
     }
 
     try {
+      const token = localStorage.getItem('adminToken');
       const res = await fetch('/api/gallery', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(form),
       });
       if (res.ok) {
@@ -141,9 +150,13 @@ export default function AdminGallery() {
   const togglePublish = async (img: GalleryImage) => {
     const next = !img.isPublished;
     try {
+      const token = localStorage.getItem('adminToken');
       const res = await fetch(`/api/gallery/${img.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ isPublished: next }),
       });
       if (res.ok) {
@@ -163,7 +176,13 @@ export default function AdminGallery() {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Delete this gallery image?')) return;
     try {
-      await fetch(`/api/gallery/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('adminToken');
+      await fetch(`/api/gallery/${id}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
     } catch {
       /* local fallback */
     }
