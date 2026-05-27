@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 const animalsData = [
@@ -124,6 +125,21 @@ async function main() {
     }
     console.log('Gallery seeded.');
   }
+
+  const adminCount = await prisma.adminUser.count();
+  if (adminCount === 0) {
+    const passwordHash = await bcrypt.hash('admin123', 10);
+    await prisma.adminUser.create({
+      data: {
+        name: 'Admin User',
+        email: 'admin@gauseva.com',
+        passwordHash,
+        role: 'ADMIN',
+      }
+    });
+    console.log('Admin user seeded (admin@gauseva.com / admin123).');
+  }
+
   console.log('Database seeded successfully!');
 }
 

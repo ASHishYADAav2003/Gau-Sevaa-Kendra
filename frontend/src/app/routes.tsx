@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import Animals from "./pages/Animals";
 import AnimalProfile from "./pages/AnimalProfile";
 import Donate from "./pages/Donate";
-import Transparency from "./pages/Transparency";
 import About from "./pages/About";
 import Volunteer from "./pages/Volunteer";
 import Blog from "./pages/Blog";
@@ -39,7 +38,6 @@ export const router = createBrowserRouter([
       { path: "animals", Component: Animals },
       { path: "animals/:id", Component: AnimalProfile },
       { path: "donate", Component: Donate },
-      { path: "transparency", Component: Transparency },
       { path: "about", Component: About },
       { path: "volunteer", Component: Volunteer },
       { path: "blog", Component: Blog },

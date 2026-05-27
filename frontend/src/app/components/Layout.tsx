@@ -14,7 +14,6 @@ export default function Layout() {
   const navLinks = [
     { path: "/", label: t('nav.home') },
     { path: "/animals", label: t('nav.animals') },
-    { path: "/transparency", label: t('nav.transparency') },
     { path: "/about", label: t('nav.about') },
     { path: "/volunteer", label: t('nav.volunteer') },
     { path: "/blog", label: t('nav.blog') },
@@ -165,7 +164,6 @@ export default function Layout() {
               <h3 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link to="/animals" className="hover:text-orange-500">{t('nav.animals')}</Link></li>
-                <li><Link to="/transparency" className="hover:text-orange-500">{t('nav.transparency')}</Link></li>
                 <li><Link to="/volunteer" className="hover:text-orange-500">{t('nav.volunteer')}</Link></li>
                 <li><Link to="/blog" className="hover:text-orange-500">{t('nav.blog')}</Link></li>
               </ul>

@@ -51,13 +51,7 @@ export default function Donate() {
       });
 
       setShowConfirmation(true);
-      setTimeout(() => {
-        setShowConfirmation(false);
-        setDonorInfo({ name: "", email: "", phone: "", panCard: "" });
-        setCustomAmount("");
-        setPaymentMethod(null);
-        setRecurring(false);
-      }, 5000);
+      // Removed auto-reset so donor can download receipt
     } catch (err) {
       setError(err instanceof Error ? err.message : "Donation failed. Please try again.");
     } finally {
@@ -96,10 +90,30 @@ export default function Donate() {
                 A confirmation email with your donation receipt has been sent to your email address.
                 Your contribution will help us continue our mission to protect and care for animals.
               </p>
-              <div className="bg-orange-50 p-6 rounded-lg">
+              <div className="bg-orange-50 p-6 rounded-lg mb-8">
                 <p className="text-sm text-gray-700">
                   <strong>Tax Benefit:</strong> {settings.taxExemptionNote}
                 </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => window.print()}
+                  className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 font-semibold"
+                >
+                  Download Receipt
+                </button>
+                <button
+                  onClick={() => {
+                    setShowConfirmation(false);
+                    setDonorInfo({ name: "", email: "", phone: "", panCard: "" });
+                    setCustomAmount("");
+                    setPaymentMethod(null);
+                    setRecurring(false);
+                  }}
+                  className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 font-semibold"
+                >
+                  Make Another Donation
+                </button>
               </div>
             </div>
           ) : (

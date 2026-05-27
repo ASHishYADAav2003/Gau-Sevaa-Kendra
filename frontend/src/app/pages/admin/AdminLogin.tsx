@@ -36,14 +36,17 @@ export default function AdminLogin() {
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (formData.email !== 'admin@gauseva.org' && formData.email !== 'admin@gausevakendra.org') {
-        // Just mock success for now, but usually it would be validated.
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
       }
-      
-      localStorage.setItem('adminToken', 'mock_token_123');
+
+      localStorage.setItem('adminToken', data.token);
       toast.success('Login successful', {
         style: {
           borderRadius: '20px',
@@ -53,7 +56,7 @@ export default function AdminLogin() {
       });
       navigate('/admin/dashboard');
     } catch (error: any) {
-      setAuthError('Invalid email or password');
+      setAuthError(error?.message || 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }

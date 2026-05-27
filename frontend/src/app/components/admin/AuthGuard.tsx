@@ -10,9 +10,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem('adminToken');
     if (!token) {
       navigate('/admin/login', { state: { from: location } });
-    } else {
-      setIsAuthenticated(true);
+      return;
     }
+
+    fetch('/api/admin/me', { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => {
+        if (!res.ok) throw new Error('unauthorized');
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        localStorage.removeItem('adminToken');
+        navigate('/admin/login', { state: { from: location } });
+      });
   }, [navigate, location]);
 
   if (isAuthenticated === null) {

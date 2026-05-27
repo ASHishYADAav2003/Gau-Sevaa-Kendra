@@ -1,14 +1,56 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { z } = require('zod');
 
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
-app.use(cors());
+// Security middlewares
+app.use(helmet());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+}));
 app.use(express.json());
+
+// 3 Second Artificial Latency (as requested)
+app.use((req, res, next) => {
+  setTimeout(next, 3000);
+});
+
+// Rate Limiter
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window`
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', apiLimiter);
+
+// --- Auth Middleware ---
+const authenticateAdmin = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized: Missing or invalid token' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.admin = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid or expired token' });
+  }
+};
 
 function formatTimeAgo(date) {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -20,6 +62,49 @@ function formatTimeAgo(date) {
   const days = Math.floor(hours / 24);
   return `${days} day${days === 1 ? '' : 's'} ago`;
 }
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+// --- Auth API ---
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const parseResult = loginSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({ error: parseResult.error.errors[0].message });
+    }
+    const { email, password } = parseResult.data;
+
+    const admin = await prisma.adminUser.findUnique({ where: { email } });
+    if (!admin) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const isValid = await bcrypt.compare(password, admin.passwordHash);
+    if (!isValid) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const token = jwt.sign(
+      { id: admin.id, role: admin.role, email: admin.email },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message, stack: error.stack });
+  }
+});
+
+app.get('/api/admin/me', authenticateAdmin, async (req, res) => {
+  try {
+    const admin = await prisma.adminUser.findUnique({ where: { id: req.admin.id } });
+    if (!admin) return res.status(404).json({ error: 'User not found' });
+    res.json({ id: admin.id, name: admin.name, email: admin.email, role: admin.role });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // --- Animals API ---
 app.get('/api/animals', async (req, res) => {
@@ -53,14 +138,14 @@ app.get('/api/animals/:id', async (req, res) => {
   }
 });
 
-// --- Stats API (for dynamic home page) ---
+// --- Stats API ---
 app.get('/api/stats', async (req, res) => {
   try {
     const [animalCount, donationCount, donationSum, volunteerCount] = await Promise.all([
       prisma.animal.count(),
-      prisma.donation.count({ where: { paymentStatus: 'Success' } }),
+      prisma.donation.count({ where: { paymentStatus: 'SUCCESS' } }),
       prisma.donation.aggregate({
-        where: { paymentStatus: 'Success' },
+        where: { paymentStatus: 'SUCCESS' },
         _sum: { amount: true },
       }),
       prisma.volunteer.count(),
@@ -103,7 +188,7 @@ async function getOrCreateSettings() {
 }
 
 // --- Donations API ---
-app.get('/api/donations', async (req, res) => {
+app.get('/api/donations', authenticateAdmin, async (req, res) => {
   try {
     const donations = await prisma.donation.findMany({
       orderBy: { date: 'desc' },
@@ -119,7 +204,7 @@ app.get('/api/donations/recent', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit, 10) || 5, 20);
     const donations = await prisma.donation.findMany({
-      where: { paymentStatus: 'Success' },
+      where: { paymentStatus: 'SUCCESS' },
       orderBy: { date: 'desc' },
       take: limit,
     });
@@ -156,23 +241,23 @@ app.post('/api/donations', async (req, res) => {
         amount: parseFloat(amount),
         paymentMethod,
         isRecurring: Boolean(isRecurring),
-        paymentStatus: 'Success',
+        paymentStatus: 'PENDING',
       },
     });
 
-    res.status(201).json({ message: 'Donation successful', donation });
+    res.status(201).json({ message: 'Donation created, pending payment', donation });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to process donation' });
   }
 });
 
-app.patch('/api/donations/:id', async (req, res) => {
+app.patch('/api/donations/:id', authenticateAdmin, async (req, res) => {
   try {
     const { paymentStatus } = req.body;
     const donation = await prisma.donation.update({
       where: { id: req.params.id },
-      data: { paymentStatus: paymentStatus || 'Pending' },
+      data: { paymentStatus: paymentStatus || 'PENDING' },
     });
     res.json(donation);
   } catch (error) {
@@ -181,13 +266,47 @@ app.patch('/api/donations/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/donations/:id', async (req, res) => {
+app.delete('/api/donations/:id', authenticateAdmin, async (req, res) => {
   try {
     await prisma.donation.delete({ where: { id: req.params.id } });
     res.json({ message: 'Donation removed' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to delete donation' });
+  }
+});
+
+// --- Payments API ---
+app.post('/api/donations/create-order', async (req, res) => {
+  try {
+    const { amount } = req.body;
+    if (!amount) return res.status(400).json({ error: 'Amount is required' });
+
+    // Placeholder for gateway integration (e.g. Razorpay or Stripe)
+    const mockOrderId = 'order_' + Math.random().toString(36).substr(2, 9);
+    
+    res.status(200).json({ 
+      orderId: mockOrderId, 
+      amount: amount, 
+      currency: 'INR' 
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create order' });
+  }
+});
+
+app.post('/api/payments/webhook', async (req, res) => {
+  try {
+    // Placeholder for gateway webhook verification
+    // 1. Verify webhook signature
+    // 2. Extract payment status
+    // 3. Update DonationPayment and Donation records
+    
+    res.status(200).json({ status: 'ok' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to process webhook' });
   }
 });
 
@@ -202,7 +321,7 @@ app.get('/api/settings', async (req, res) => {
   }
 });
 
-app.put('/api/settings', async (req, res) => {
+app.put('/api/settings', authenticateAdmin, async (req, res) => {
   try {
     const {
       organizationName,
@@ -235,6 +354,15 @@ app.put('/api/settings', async (req, res) => {
       },
       create: { ...defaultSettings, ...req.body, id: 'default' },
     });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'UPDATE_SETTINGS',
+        details: 'Settings updated by admin',
+        adminId: req.admin.id,
+      }
+    });
+
     res.json(settings);
   } catch (error) {
     console.error(error);
@@ -243,7 +371,7 @@ app.put('/api/settings', async (req, res) => {
 });
 
 // --- Volunteers API ---
-app.get('/api/volunteers', async (req, res) => {
+app.get('/api/volunteers', authenticateAdmin, async (req, res) => {
   try {
     const volunteers = await prisma.volunteer.findMany({
       orderBy: { createdAt: 'desc' },
@@ -255,12 +383,12 @@ app.get('/api/volunteers', async (req, res) => {
   }
 });
 
-app.patch('/api/volunteers/:id', async (req, res) => {
+app.patch('/api/volunteers/:id', authenticateAdmin, async (req, res) => {
   try {
     const { status } = req.body;
     const volunteer = await prisma.volunteer.update({
       where: { id: req.params.id },
-      data: { status: status || 'Pending' },
+      data: { status: status || 'PENDING' },
     });
     res.json(volunteer);
   } catch (error) {
@@ -269,7 +397,7 @@ app.patch('/api/volunteers/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/volunteers/:id', async (req, res) => {
+app.delete('/api/volunteers/:id', authenticateAdmin, async (req, res) => {
   try {
     await prisma.volunteer.delete({ where: { id: req.params.id } });
     res.json({ message: 'Volunteer removed' });
@@ -313,7 +441,7 @@ app.post('/api/volunteers', async (req, res) => {
         availability: Array.isArray(availabilityList)
           ? availabilityList.join(', ')
           : String(availabilityList || 'Flexible'),
-        status: 'Pending',
+        status: 'PENDING',
       },
     });
 
@@ -328,6 +456,19 @@ app.post('/api/volunteers', async (req, res) => {
 app.get('/api/gallery', async (req, res) => {
   try {
     const publishedOnly = req.query.published === 'true';
+    
+    if (!publishedOnly) {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized to view unpublished images' });
+      }
+      try {
+        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+      } catch (err) {
+        return res.status(401).json({ error: 'Unauthorized to view unpublished images' });
+      }
+    }
+
     const images = await prisma.galleryImage.findMany({
       where: publishedOnly ? { isPublished: true } : undefined,
       orderBy: { createdAt: 'desc' },
@@ -339,7 +480,7 @@ app.get('/api/gallery', async (req, res) => {
   }
 });
 
-app.post('/api/gallery', async (req, res) => {
+app.post('/api/gallery', authenticateAdmin, async (req, res) => {
   try {
     const { title, imageUrl, category, caption, isPublished } = req.body;
     if (!title || !imageUrl) {
@@ -361,7 +502,7 @@ app.post('/api/gallery', async (req, res) => {
   }
 });
 
-app.patch('/api/gallery/:id', async (req, res) => {
+app.patch('/api/gallery/:id', authenticateAdmin, async (req, res) => {
   try {
     const { title, imageUrl, category, caption, isPublished } = req.body;
     const image = await prisma.galleryImage.update({
@@ -381,7 +522,7 @@ app.patch('/api/gallery/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/gallery/:id', async (req, res) => {
+app.delete('/api/gallery/:id', authenticateAdmin, async (req, res) => {
   try {
     await prisma.galleryImage.delete({ where: { id: req.params.id } });
     res.json({ message: 'Gallery image deleted' });
@@ -402,6 +543,18 @@ app.post('/api/contacts', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to send message' });
+  }
+});
+
+app.get('/api/contacts', authenticateAdmin, async (req, res) => {
+  try {
+    const contacts = await prisma.contact.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(contacts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch contacts' });
   }
 });
 

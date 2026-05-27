@@ -54,7 +54,12 @@ export default function DonationsList() {
   const fetchDonations = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/donations');
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch('/api/donations', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         const local = loadLocalDonations();
@@ -77,9 +82,13 @@ export default function DonationsList() {
 
   const updateStatus = async (id: string, paymentStatus: string) => {
     try {
+      const token = localStorage.getItem('adminToken');
       await fetch(`/api/donations/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ paymentStatus }),
       });
     } catch {
@@ -92,7 +101,13 @@ export default function DonationsList() {
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Remove donation record from ${name}?`)) return;
     try {
-      await fetch(`/api/donations/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('adminToken');
+      await fetch(`/api/donations/${id}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
     } catch {
       /* local */
     }
