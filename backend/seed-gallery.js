@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 const galleryData = [
   {
-    title: 'Morning Feeding',
+    title: 'Morning Feeeding',
     imageUrl: 'https://images.unsplash.com/photo-1772948260139-d5a6418e143d?w=600&q=80',
     category: 'Daily Care',
     caption: 'Volunteers feeding cows at sunrise',
