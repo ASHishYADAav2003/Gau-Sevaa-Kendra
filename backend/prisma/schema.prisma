@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DonationType {
+  GENERAL
+  CAMPAIGN
+}
+
+enum DonationStatus {
+  CREATED
+  ATTEMPTED
+  PAID
+  FAILED
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum AnimalStatus {
+  ACTIVE
+  ADOPTED
+  DECEASED
+  UNDER_TREATMENT
+}
+
+enum ExpenseCategory {
+  FODDER
+  MEDICINE
+  STAFF
+  TRANSPORT
+  MAINTENANCE
+  UTILITIES
+  INFRASTRUCTURE
+  OTHER
+}
+
+model AdminUser {
+  id               String         @id @default(cuid())
+  username         String         @unique
+  passwordHash     String
+  isActive         Boolean        @default(true)
+  lastLoginAt      DateTime?
+  currentSessionId String?        @unique
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  sessions         AdminSession[]
+}
+
+model AdminSession {
+  id          String    @id @default(cuid())
+  adminUserId String
+  tokenHash   String    @unique
+  ipAddress   String?
+  userAgent   String?
+  isRevoked   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, isRevoked])
+  @@index([expiresAt])
+}
+
+model Donor {
+  id                String     @id @default(cuid())
+  fullName          String
+  phone             String?
+  email             String?
+  isAnonymousPublic Boolean    @default(false)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  donations         Donation[]
+
+  @@index([phone])
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Campaign {
+  id                String            @id @default(cuid())
+  animalId          String?
+  slug              String            @unique
+  titleEn           String
+  titleHi           String?
+  shortSummaryEn    String
+  shortSummaryHi    String?
+  fullStoryEn       String?
+  fullStoryHi       String?
+  targetAmountPaise Int
+  raisedAmountPaise Int               @default(0)
+  status            CampaignStatus    @default(DRAFT)
+  startDate         DateTime?
+  endDate           DateTime?
+  commentsEnabled   Boolean           @default(true)
+  autoCloseOnGoal   Boolean           @default(true)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  animal            Animal?           @relation(fields: [animalId], references: [id], onDelete: SetNull)
+  images            CampaignImage[]
+  updates           CampaignUpdate[]
+  comments          CampaignComment[]
+  donations         Donation[]
+  expenses          ExpenseLedger[]
+
+  @@index([animalId])
+  @@index([status])
+  @@index([startDate, endDate])
+  @@index([createdAt])
+}
+
+model CampaignImage {
+  id         String   @id @default(cuid())
+  campaignId String
+  imageUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, sortOrder])
+}
+
+model CampaignUpdate {
+  id          String   @id @default(cuid())
+  campaignId  String
+  titleEn     String
+  titleHi     String?
+  bodyEn      String
+  bodyHi      String?
+  imageUrl    String?
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, publishedAt])
+}
+
+model CampaignComment {
+  id          String    @id @default(cuid())
+  campaignId  String
+  donorName   String
+  donorPhone  String?
+  donorEmail  String?
+  commentText String
+  isApproved  Boolean   @default(true)
+  isHidden    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  moderatedAt DateTime?
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, createdAt])
+  @@index([campaignId, isApproved, isHidden])
+}
+
+model Animal {
+  id             String                @id @default(cuid())
+  tagId          String                @unique
+  name           String
+  ageMonths      Int?
+  gender         String?
+  breed          String?
+  healthStatus   String?
+  rescueDate     DateTime?
+  shedLocation   String?
+  notes          String?
+  status         AnimalStatus          @default(ACTIVE)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  images         AnimalImage[]
+  medicalRecords AnimalMedicalRecord[]
+  expenses       ExpenseLedger[]
+  campaigns      Campaign[]
+
+  @@index([status])
+  @@index([name])
+  @@index([createdAt])
+}
+
+model AnimalImage {
+  id        String   @id @default(cuid())
+  animalId  String
+  imageUrl  String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  animal    Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@index([animalId, sortOrder])
+}
+
+model AnimalMedicalRecord {
+  id            String   @id @default(cuid())
+  animalId      String
+  recordDate    DateTime
+  diagnosis     String?
+  treatment     String?
+  vetName       String?
+  notes         String?
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  animal        Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@index([animalId, recordDate])
+}
+
+model Donation {
+  id                  String         @id @default(cuid())
+  donorId             String
+  campaignId          String?
+  donationType        DonationType
+  amountPaise         Int
+  currency            String         @default("INR")
+  status              DonationStatus @default(CREATED)
+  razorpayOrderId     String         @unique
+  razorpayPaymentId   String?        @unique
+  razorpaySignature   String?
+  paymentMethod       String?
+  paymentCapturedAt   DateTime?
+  paymentFailedReason String?
+  taxReceiptRequested Boolean        @default(false)
+  receiptNumber       String?        @unique
+  isAnonymousPublic   Boolean        @default(false)
+  donorDisplayName    String?
+  notes               String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  donor               Donor          @relation(fields: [donorId], references: [id], onDelete: Restrict)
+  campaign            Campaign?      @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  receipt             Receipt?
+
+  @@index([status, createdAt])
+  @@index([campaignId, createdAt])
+  @@index([donorId, createdAt])
+  @@index([donationType, createdAt])
+}
+
+model Receipt {
+  id                String   @id @default(cuid())
+  donationId        String   @unique
+  receiptNumber     String   @unique
+  issuedAt          DateTime @default(now())
+  sentToEmail       String?
+  pdfChecksum       String?
+  legalTextSnapshot String?
+  generatedBySystem Boolean  @default(true)
+  donation          Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+
+  @@index([issuedAt])
+}
+
+model ExpenseLedger {
+  id            String          @id @default(cuid())
+  expenseDate   DateTime
+  amountPaise   Int
+  category      ExpenseCategory
+  vendorName    String?
+  notes         String?
+  attachmentUrl String?
+  animalId      String?
+  campaignId    String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  animal        Animal?         @relation(fields: [animalId], references: [id], onDelete: SetNull)
+  campaign      Campaign?       @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  @@index([expenseDate])
+  @@index([category, expenseDate])
+  @@index([animalId])
+  @@index([campaignId])
+}
+
+model NotificationConfig {
+  id                         String   @id @default(cuid())
+  donationEmailEnabled       Boolean  @default(true)
+  notificationEmail          String?
+  thresholdEnabled           Boolean  @default(false)
+  thresholdAmountPaise       Int?
+  sendAllSuccessfulDonations Boolean  @default(true)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}
+
+model SystemConfig {
+  id                     String   @id @default(cuid())
+  orgName                String   @default("Ganpati Gauseva")
+  defaultLanguage        String   @default("en")
+  supportedLanguages     String   @default("en,hi")
+  commentsDefaultEnabled Boolean  @default(true)
+  receiptPrefix          String   @default("GGS")
+  receiptSequenceNumber  Int      @default(0)
+  legal80GText           String?
+  legal80GNumber         String?
+  legal80GValidity       String?
+  termsPageContent       String?
+  privacyPageContent     String?
+  refundPolicyContent    String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model PaymentWebhookEvent {
+  id              String    @id @default(cuid())
+  razorpayEventId String?   @unique
+  eventType       String
+  payloadJson     Json
+  signatureHeader String?
+  isVerified      Boolean   @default(false)
+  processed       Boolean   @default(false)
+  processedAt     DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([processed, createdAt])
+}
