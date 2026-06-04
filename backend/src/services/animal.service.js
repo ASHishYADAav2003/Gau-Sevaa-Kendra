@@ -63,6 +63,20 @@ export const updateAnimal = async (animalId, payload) => {
   });
 };
 
+export const deleteAnimal = async (animalId) => {
+  const animal = await prisma.animal.findUnique({
+    where: { id: animalId }
+  });
+
+  if (!animal) {
+    throw new AppError("Animal not found", 404);
+  }
+
+  await prisma.animal.delete({
+    where: { id: animalId }
+  });
+};
+
 export const listAdminAnimals = async (query) => {
   const pagination = getPagination(query);
   const where = buildAnimalWhere(query);

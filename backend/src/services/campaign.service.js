@@ -41,7 +41,7 @@ export const listPublicCampaigns = async (query) => {
         images: true,
         animal: true
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
       skip: pagination.skip,
       take: pagination.take
     }),
@@ -59,8 +59,11 @@ export const listPublicCampaigns = async (query) => {
 };
 
 export const getPublicCampaignBySlug = async (slug) => {
-  const campaign = await prisma.campaign.findUnique({
-    where: { slug },
+  const campaign = await prisma.campaign.findFirst({
+    where: {
+      slug,
+      status: "ACTIVE"
+    },
     include: {
       images: true,
       animal: true,
@@ -131,6 +134,7 @@ export const createCampaign = async (payload) => {
       fullStoryHi: payload.fullStoryHi || null,
       targetAmountPaise: toPaise(payload.targetAmount),
       status: payload.status || "DRAFT",
+      isFeatured: payload.isFeatured ?? false,
       startDate: payload.startDate ? new Date(payload.startDate) : null,
       endDate: payload.endDate ? new Date(payload.endDate) : null,
       commentsEnabled: payload.commentsEnabled ?? true,
@@ -165,7 +169,7 @@ export const listAdminCampaigns = async (query) => {
           }
         }
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
       skip: pagination.skip,
       take: pagination.take
     }),
@@ -235,6 +239,7 @@ export const updateCampaign = async (campaignId, payload) => {
     "fullStoryEn",
     "fullStoryHi",
     "status",
+    "isFeatured",
     "commentsEnabled",
     "autoCloseOnGoal"
   ]) {

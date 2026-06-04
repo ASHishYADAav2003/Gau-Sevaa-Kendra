@@ -1,11 +1,24 @@
 import { Navigate, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { LayoutDashboard, Heart, IndianRupee, Banknote, Users, FileText, Mail, Image as ImageIcon, Settings, LogOut, ChevronLeft } from 'lucide-react';
+import { useEffect } from 'react';
+import { LayoutDashboard, Heart, IndianRupee, Banknote, Settings, LogOut, ChevronLeft, Target } from 'lucide-react';
 
 export default function AdminLayout() {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, isCheckingSession, checkSession, logout } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
+
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center text-sm font-medium text-gray-500">
+        Checking secure admin session...
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
@@ -17,17 +30,9 @@ export default function AdminLayout() {
       items: [
         { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
         { name: 'Animals', path: '/admin/animals', icon: Heart },
+        { name: 'Campaigns', path: '/admin/campaigns', icon: Target },
         { name: 'Donations', path: '/admin/donations', icon: IndianRupee },
         { name: 'Expenses', path: '/admin/expenses', icon: Banknote },
-      ]
-    },
-    {
-      title: 'MANAGE',
-      items: [
-        { name: 'Volunteers', path: '/admin/volunteers', icon: Users },
-        { name: 'Blog', path: '/admin/blog', icon: FileText },
-        { name: 'Newsletter', path: '/admin/newsletter', icon: Mail },
-        { name: 'Gallery', path: '/admin/gallery', icon: ImageIcon },
       ]
     },
     {
@@ -95,7 +100,7 @@ export default function AdminLayout() {
         
         <div className="p-4 mt-auto">
           <button 
-            onClick={logout}
+            onClick={() => void logout()}
             className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm font-medium text-red-400 hover:bg-white/5 transition-colors"
           >
             <LogOut className="w-[18px] h-[18px]" />

@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import {
   createAnimal,
   createMedicalRecord,
+  deleteAnimal,
   exportAnimals,
   getAnimalById,
   listAdminAnimals,
@@ -38,6 +39,11 @@ export const adminGetAnimal = asyncHandler(async (req, res) => {
 export const adminUpdateAnimal = asyncHandler(async (req, res) => {
   const result = await updateAnimal(req.params.id, req.validatedBody);
   res.status(200).json(result);
+});
+
+export const adminDeleteAnimal = asyncHandler(async (req, res) => {
+  await deleteAnimal(req.params.id);
+  res.status(200).json({ message: "Animal deleted successfully" });
 });
 
 export const adminUploadAnimalImages = asyncHandler(async (req, res) => {

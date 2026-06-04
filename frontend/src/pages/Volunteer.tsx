@@ -10,24 +10,8 @@ export default function Volunteer() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    const formData = new FormData(e.currentTarget);
-    const newVolunteer = {
-      id: Date.now().toString(),
-      name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      availability: formData.get('availability'),
-      message: formData.get('message'),
-      joinedAt: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-      status: 'Pending Review'
-    };
 
-    // Simulate API call and save to local storage
     setTimeout(() => {
-      const existing = JSON.parse(localStorage.getItem('gauseva_volunteers') || '[]');
-      localStorage.setItem('gauseva_volunteers', JSON.stringify([newVolunteer, ...existing]));
-      
       setIsSubmitting(false);
       setIsSubmitted(true);
     }, 1500);

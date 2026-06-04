@@ -4,8 +4,10 @@ import PublicLayout from './layouts/PublicLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
 import Donate from './pages/Donate';
+import ThankYou from './pages/ThankYou';
 import Volunteer from './pages/Volunteer';
-import Blog from './pages/Blog';
+import Campaigns from './pages/Campaigns';
+import CampaignDetail from './pages/CampaignDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/Login';
@@ -13,11 +15,10 @@ import Dashboard from './pages/admin/Dashboard';
 import AdminSettings from './pages/admin/Settings';
 import DonationsList from './pages/admin/DonationsList';
 import ExpensesList from './pages/admin/ExpensesList';
-import VolunteersList from './pages/admin/VolunteersList';
 import AnimalsList from './pages/admin/AnimalsList';
 import AddAnimal from './pages/admin/AddAnimal';
 import EditAnimal from './pages/admin/EditAnimal';
-import NewsletterList from './pages/admin/NewsletterList';
+import AdminCampaigns from './pages/admin/CampaignsList';
 import RefundPolicy from './pages/RefundPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
@@ -31,9 +32,10 @@ function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="donate" element={<Donate />} />
+            <Route path="thank-you/:donationId" element={<ThankYou />} />
             <Route path="volunteer" element={<Volunteer />} />
-            <Route path="blog" element={<Blog />} />
-            <Route path="campaigns" element={<div className="p-12 text-center text-2xl font-bold">Campaigns List (Coming Soon)</div>} />
+            <Route path="campaigns" element={<Campaigns />} />
+            <Route path="campaigns/:slug" element={<CampaignDetail />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="terms" element={<Terms />} />
@@ -49,12 +51,10 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="donations" element={<DonationsList />} />
             <Route path="expenses" element={<ExpensesList />} />
-            <Route path="volunteers" element={<VolunteersList />} />
             <Route path="animals" element={<AnimalsList />} />
             <Route path="animals/add" element={<AddAnimal />} />
             <Route path="animals/edit/:id" element={<EditAnimal />} />
-            <Route path="campaigns" element={<div className="p-6 text-xl">Campaigns Management (Coming Soon)</div>} />
-            <Route path="newsletter" element={<NewsletterList />} />
+            <Route path="campaigns" element={<AdminCampaigns />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 

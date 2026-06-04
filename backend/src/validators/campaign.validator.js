@@ -10,6 +10,7 @@ export const createCampaignSchema = z.object({
   fullStoryHi: z.string().trim().optional().nullable(),
   targetAmount: z.coerce.number().min(1),
   status: z.enum(["DRAFT", "ACTIVE", "CLOSED", "ARCHIVED"]).optional(),
+  isFeatured: z.boolean().optional(),
   startDate: z.string().datetime().optional().nullable(),
   endDate: z.string().datetime().optional().nullable(),
   commentsEnabled: z.boolean().optional(),

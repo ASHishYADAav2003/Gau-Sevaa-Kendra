@@ -46,11 +46,9 @@ export default function Navbar() {
             {[
               { path: '/', label: 'Home' },
               { path: '/about', label: 'About Us' },
-              { path: '/work', label: 'Our Work' },
-              { path: '/animals', label: 'Animals' },
+              { path: '/campaigns', label: 'Campaigns' },
               { path: '/donate', label: 'Donation' },
               { path: '/volunteer', label: 'Volunteer' },
-              { path: '/blog', label: 'Blog' },
               { path: '/contact', label: 'Contact' },
             ].map((link) => (
               <Link 
@@ -90,11 +88,9 @@ export default function Navbar() {
           {[
             { path: '/', label: 'Home' },
             { path: '/about', label: 'About Us' },
-            { path: '/work', label: 'Our Work' },
-            { path: '/animals', label: 'Animals' },
+            { path: '/campaigns', label: 'Campaigns' },
             { path: '/donate', label: 'Donation' },
             { path: '/volunteer', label: 'Volunteer' },
-            { path: '/blog', label: 'Blog' },
             { path: '/contact', label: 'Contact' },
           ].map((link) => (
             <Link 

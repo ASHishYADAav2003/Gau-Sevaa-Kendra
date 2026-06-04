@@ -1,164 +1,84 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MapPin, Phone, Mail, MessageCircle, Globe, Camera, Video, Send } from 'lucide-react';
+import { Heart, Mail, MapPin, MessageCircle, Phone, ShieldCheck } from 'lucide-react';
 import Reveal from './Reveal';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    const saved = localStorage.getItem('gauseva_newsletter');
-    const subscribers = saved ? JSON.parse(saved) : [];
-    
-    // Check if already subscribed
-    if (subscribers.some((s: any) => s.email === email)) {
-      alert('You are already subscribed!');
-      setEmail('');
-      return;
-    }
-
-    const newSubscriber = {
-      id: Date.now().toString(),
-      email,
-      subscribedAt: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-    };
-
-    localStorage.setItem('gauseva_newsletter', JSON.stringify([...subscribers, newSubscriber]));
-    setSubscribed(true);
-    setEmail('');
-    
-    // Hide message after 5 seconds
-    setTimeout(() => setSubscribed(false), 5000);
-  };
-
   return (
-    <footer className="relative text-white py-16 overflow-hidden">
-      {/* Parallax Background */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
-        style={{ backgroundImage: `url('/beautiful-cow.png')` }}
-      >
-        <div className="absolute inset-0 bg-brand-green/80"></div>
-        <div className="absolute inset-0 bg-black/30"></div>
+    <footer className="relative overflow-hidden bg-brand-green text-white">
+      <div className="absolute inset-0">
+        <img src="/beautiful-cow.png" alt="" className="h-full w-full object-cover opacity-15" />
+        <div className="absolute inset-0 bg-brand-green/90" />
       </div>
 
-      <Reveal className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 lg:gap-12">
-          
-          <div className="md:col-span-1 lg:col-span-1">
-            <Link to="/" className="flex flex-col items-start gap-2 mb-6 bg-white p-2 rounded-xl inline-block w-fit">
-              <img src="/logo.jpeg" alt="Gau Seva Kendra Logo" className="h-16 w-auto object-contain" />
+      <Reveal className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          <div className="lg:col-span-2">
+            <Link to="/" className="inline-flex items-center gap-3 rounded-lg bg-white p-2 mb-5">
+              <img src="/logo.jpeg" alt="Gau Seva Kendra Logo" className="h-14 w-auto object-contain" />
             </Link>
-            <p className="text-white/80 text-sm leading-relaxed mb-6">
-              We are committed to the protection, care and well-being of cows. Together, let's create a more compassionate world.
+            <p className="max-w-md text-sm leading-7 text-white/75">
+              A donation and care management platform for animal rescue, campaign transparency, expenses, and secure donor receipts.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition">
-                <Globe className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition">
-                <Camera className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition">
-                <Video className="w-4 h-4" />
-              </a>
+            <Link to="/donate" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-orange px-5 py-3 text-sm font-bold text-white hover:bg-orange-700">
+              Donate Securely <Heart className="h-4 w-4 fill-white" />
+            </Link>
+          </div>
+
+          <div>
+            <h3 className="mb-4 font-semibold text-brand-orange">Explore</h3>
+            <ul className="space-y-3 text-sm text-white/80">
+              <li><Link to="/" className="hover:text-white">Home</Link></li>
+              <li><Link to="/campaigns" className="hover:text-white">Campaigns</Link></li>
+              <li><Link to="/donate" className="hover:text-white">Donate</Link></li>
+              <li><Link to="/about" className="hover:text-white">About</Link></li>
+              <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="mb-4 font-semibold text-brand-orange">Legal & Trust</h3>
+            <ul className="space-y-3 text-sm text-white/80">
+              <li><Link to="/terms" className="hover:text-white">Terms and Conditions</Link></li>
+              <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/refund" className="hover:text-white">Refund Policy</Link></li>
+              <li><Link to="/donate" className="hover:text-white">Tax Receipt Flow</Link></li>
+            </ul>
+            <div className="mt-5 flex items-start gap-2 rounded-lg bg-white/10 p-3 text-xs text-white/70">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-orange" />
+              <span>Payments are created and verified through backend APIs before receipts are shown.</span>
             </div>
           </div>
 
           <div>
-            <h3 className="text-brand-orange font-semibold mb-6">Quick Links</h3>
-            <ul className="space-y-3 text-sm text-white/80">
-              <li><Link to="/" className="hover:text-white transition">Home</Link></li>
-              <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
-              <li><Link to="/work" className="hover:text-white transition">Our Work</Link></li>
-              <li><Link to="/animals" className="hover:text-white transition">Animals</Link></li>
-              <li><Link to="/donate" className="hover:text-white transition">Donation</Link></li>
-              <li><Link to="/volunteer" className="hover:text-white transition">Volunteer</Link></li>
-              <li><Link to="/blog" className="hover:text-white transition">Blog</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition">Contact</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-brand-orange font-semibold mb-6">Our Services</h3>
-            <ul className="space-y-3 text-sm text-white/80">
-              <li><Link to="/services" className="hover:text-white transition">Rescue & Shelter</Link></li>
-              <li><Link to="/services" className="hover:text-white transition">Medical Care</Link></li>
-              <li><Link to="/services" className="hover:text-white transition">Food & Nutrition</Link></li>
-              <li><Link to="/services" className="hover:text-white transition">Adoption</Link></li>
-              <li><Link to="/services" className="hover:text-white transition">Emergency Support</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-brand-orange font-semibold mb-6">Contact Us</h3>
+            <h3 className="mb-4 font-semibold text-brand-orange">Contact</h3>
             <ul className="space-y-4 text-sm text-white/80">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-brand-orange shrink-0 mt-0.5" />
-                <span>123, Gau Seva Marg,<br/>Vrindavan, Uttar Pradesh - 281121</span>
+                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-orange" />
+                <span>Gau Seva Kendra<br />Vrindavan, Uttar Pradesh</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-brand-orange shrink-0" />
+                <Phone className="h-5 w-5 shrink-0 text-brand-orange" />
                 <span>+91 98765 43210</span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-brand-orange shrink-0" />
+                <Mail className="h-5 w-5 shrink-0 text-brand-orange" />
                 <span>info@gausevakendra.org</span>
               </li>
               <li className="flex items-center gap-3">
-                <MessageCircle className="w-5 h-5 text-green-400 shrink-0" />
-                <span>WhatsApp Us</span>
+                <MessageCircle className="h-5 w-5 shrink-0 text-green-300" />
+                <span>Emergency support via contact page</span>
               </li>
             </ul>
           </div>
-
-          <div>
-            <h3 className="text-brand-orange font-semibold mb-6">Newsletter</h3>
-            <p className="text-sm text-white/80 mb-4">Subscribe to get updates and our latest news.</p>
-            {subscribed ? (
-              <div className="bg-green-500/20 text-green-400 border border-green-500/30 px-4 py-2 rounded-md text-sm">
-                Thank you for subscribing!
-              </div>
-            ) : (
-              <form className="flex" onSubmit={handleSubscribe}>
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Your email address" 
-                  className="bg-white text-brand-dark px-4 py-2 w-full rounded-l-md focus:outline-none text-sm"
-                />
-                <button 
-                  type="submit" 
-                  className="bg-brand-orange hover:bg-[#c66e2c] px-4 py-2 rounded-r-md transition flex items-center justify-center"
-                >
-                  <Send className="w-4 h-4 text-white" />
-                </button>
-              </form>
-            )}
-          </div>
-
         </div>
-        
-        <div className="mt-16 pt-8 border-t border-white/10 text-xs text-white/60 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>&copy; {new Date().getFullYear()} Gau Seva Kendra. All Rights Reserved.</p>
-          
-          <div className="flex gap-4 md:gap-6">
-            <Link to="/terms" className="hover:text-white transition">Terms</Link>
-            <Link to="/privacy" className="hover:text-white transition">Privacy Policy</Link>
-            <Link to="/refund" className="hover:text-white transition">Refund Policy</Link>
-          </div>
 
-          <div className="flex items-center gap-4">
-            <p className="flex items-center gap-1">Made with <Heart className="h-3 w-3 text-red-500 fill-red-500"/> for Gau Seva</p>
-            <Link to="/admin" className="hover:text-white transition bg-white/10 px-3 py-1.5 rounded flex items-center gap-1">
-              Admin Login
-            </Link>
+        <div className="mt-12 border-t border-white/10 pt-6 text-xs text-white/60 flex flex-col md:flex-row justify-between gap-4">
+          <p>&copy; {new Date().getFullYear()} Gau Seva Kendra. All Rights Reserved.</p>
+          <div className="flex flex-wrap gap-4">
+            <Link to="/terms" className="hover:text-white">Terms</Link>
+            <Link to="/privacy" className="hover:text-white">Privacy</Link>
+            <Link to="/refund" className="hover:text-white">Refunds</Link>
+            <Link to="/admin" className="hover:text-white">Admin</Link>
           </div>
         </div>
       </Reveal>

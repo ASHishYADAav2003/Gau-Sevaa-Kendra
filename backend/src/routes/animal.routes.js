@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   adminCreateAnimal,
   adminCreateMedicalRecord,
+  adminDeleteAnimal,
   adminExportAnimals,
   adminGetAnimal,
   adminGetAnimals,
@@ -31,6 +32,7 @@ adminAnimalRouter.get("/", adminGetAnimals);
 adminAnimalRouter.get("/export", adminExportAnimals);
 adminAnimalRouter.get("/:id", adminGetAnimal);
 adminAnimalRouter.put("/:id", validateBody(updateAnimalSchema), adminUpdateAnimal);
+adminAnimalRouter.delete("/:id", adminDeleteAnimal);
 adminAnimalRouter.post(
   "/:id/images",
   animalImageUpload.array("images", 5),

@@ -3,14 +3,15 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { ShieldCheck, Lock } from 'lucide-react';
-import axios from 'axios';
+import { authApi } from '../../api/services';
+import { getApiErrorMessage } from '../../api/client';
 
 export default function AdminLogin() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuthStore();
+  const { setAdmin, isAuthenticated } = useAuthStore();
 
   if (isAuthenticated) {
     return <Navigate to="/admin" replace />;
@@ -21,24 +22,15 @@ export default function AdminLogin() {
     setError('');
     
     try {
-      const response = await axios.post('/api/v1/auth/login', {
+      const response = await authApi.login({
         username: data.username,
         password: data.password
       });
-      
-      if (response.data.success && response.data.data.token) {
-        login(response.data.data.token);
-        navigate('/admin');
-      } else {
-        setError('Login failed. Please try again.');
-      }
+
+      setAdmin(response.admin);
+      navigate('/admin');
     } catch (err: any) {
-      console.error('Login error:', err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Invalid username or password');
-      }
+      setError(getApiErrorMessage(err, 'Invalid username or password'));
     } finally {
       setIsLoading(false);
     }
@@ -102,9 +94,6 @@ export default function AdminLogin() {
               </button>
             </div>
             
-            <div className="text-center text-xs text-gray-500 pt-4 border-t border-gray-100">
-              Demo Credentials: admin / admin123
-            </div>
           </form>
         </div>
       </div>

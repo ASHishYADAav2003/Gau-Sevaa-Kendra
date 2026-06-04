@@ -100,6 +100,7 @@ model Campaign {
   targetAmountPaise Int
   raisedAmountPaise Int               @default(0)
   status            CampaignStatus    @default(DRAFT)
+  isFeatured        Boolean           @default(false)
   startDate         DateTime?
   endDate           DateTime?
   commentsEnabled   Boolean           @default(true)
@@ -115,6 +116,7 @@ model Campaign {
 
   @@index([animalId])
   @@index([status])
+  @@index([isFeatured, status])
   @@index([startDate, endDate])
   @@index([createdAt])
 }
