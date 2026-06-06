@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Heart, Home as HomeIcon, IndianRupee, ShieldCheck, Stethoscope, Target, Users } from 'lucide-react';
+import { ArrowRight, Heart, Home as HomeIcon, IndianRupee, ShieldCheck, Stethoscope, Target, Users, Leaf, HeartHandshake, Landmark, Sparkles } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import Reveal from '../components/Reveal';
 import { animalApi, campaignApi, publicApi } from '../api/services';
@@ -59,29 +59,162 @@ export default function HomePage() {
         <meta name="description" content={`Support active rescue and care campaigns at ${orgName}. Donate securely and follow transparent campaign progress.`} />
       </Helmet>
 
-      <section className="relative min-h-[680px] flex items-center overflow-hidden">
+      <section className="relative min-h-[800px] flex items-center overflow-hidden">
         <img src="/hero-cow-calf.png" alt="Cow and calf at the sanctuary" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
-          <div className="max-w-3xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full pt-32">
+          <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
             <Reveal>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-orange-100 ring-1 ring-white/20">
-                <ShieldCheck className="w-4 h-4" /> Transparent donation and care management
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-md px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-white/30 uppercase tracking-wider">
+                <Sparkles className="w-4 h-4 text-orange-200" /> A SACRED JOURNEY OF COMPASSION
               </span>
-              <h1 className="mt-6 text-4xl md:text-6xl font-extrabold text-white leading-tight">
-                Help rescued cows receive daily food, shelter, and medical care.
+              <h1 className="mt-8 text-5xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-orange-100 to-white drop-shadow-sm font-serif">
+                <span className="block pb-1 leading-normal">धेनुः कामदुघा राजन्</span>
+                <span className="block pt-1 leading-normal">सर्वकामफलप्रदा।</span>
               </h1>
-              <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl">
-                {orgName} connects donors with active campaigns, real animal records, and secure receipts through a backend-managed platform.
+              <p className="mt-6 text-lg md:text-xl text-white/90 max-w-xl leading-relaxed font-light">
+                Experience the divine joy of nurturing gentle souls. We provide luxurious care, healing, and endless love to our sacred mother cows.
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Link to="/donate" className="btn-primary inline-flex items-center justify-center gap-2 px-6 py-3">
-                  Donate Now <Heart className="w-5 h-5 fill-white" />
+              <div className="mt-10 flex flex-col sm:flex-row gap-6 items-center">
+                <Link to="/donate" className="inline-flex items-center justify-center gap-3 rounded-full bg-brand-orange px-8 py-4 font-bold text-white hover:bg-orange-700 transition-all shadow-[0_0_20px_rgba(217,164,65,0.4)] hover:scale-105">
+                  <Heart className="w-5 h-5 fill-white" /> Offer Your Devotion
                 </Link>
-                <Link to="/campaigns" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-brand-green hover:bg-orange-50">
-                  View Campaigns <ArrowRight className="w-5 h-5" />
+                <Link to="/about" className="inline-flex items-center justify-center gap-2 font-semibold text-white hover:text-orange-200 transition-colors">
+                  Discover Our Soul <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <div className="rounded-2xl bg-transparent border border-white/20 p-8 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-orange/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="text-xl font-bold">Live Impact</h3>
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-green-300">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    Real-time
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Animals Registered</p>
+                    <p className="text-4xl font-light text-orange-100">{animals.length.toLocaleString('en-IN')}</p>
+                  </div>
+                  <div className="w-full h-px bg-white/10"></div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Active Campaigns</p>
+                    <p className="text-4xl font-light text-orange-100">{campaigns.length.toLocaleString('en-IN')}</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <p className="text-sm italic text-white/80 font-light leading-relaxed">
+                    "The purity of their gaze washes away all earthly sorrows."
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Dharma Section */}
+      <section className="py-20 md:py-32 bg-brand-beige relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <Reveal>
+              <div className="relative rounded-3xl overflow-hidden aspect-square shadow-2xl group">
+                <img src="/hero-cow-calf.png" alt="Sanctuary of peace" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-8 left-8 text-white">
+                  <div className="mb-3">
+                    <ShieldCheck className="w-10 h-10 text-orange-300" strokeWidth={1.5} />
+                  </div>
+                  <p className="text-xl font-serif italic text-white/90">Sanctuary of Peace</p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-px w-12 bg-brand-orange" />
+                <span className="text-sm font-bold uppercase tracking-wider text-brand-orange">OUR DHARMA</span>
+              </div>
+              <h2 className="text-5xl md:text-6xl font-bold font-serif mb-8 text-brand-dark">
+                न हि गोसमं <span className="text-brand-green">पित्रम्</span>
+              </h2>
+              <div className="space-y-6 text-brand-dark/70 text-lg leading-relaxed">
+                <p>
+                  Gau Seva Kendra is not merely a shelter; it is a sacred temple dedicated to the welfare, rescue, and rehabilitation of abandoned cows. Here, every hoofprint is a blessing, and every gentle moo is a mantra of peace.
+                </p>
+                <p>
+                  We believe that caring for these gentle creatures elevates the human spirit, purifying our society and nurturing the environment. Through world-class medical care, premium organic feeding, and boundless love, we restore their divine dignity.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Sacred Duties Section */}
+      <section className="py-20 md:py-32 bg-brand-beige border-t border-brand-orange/10 relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-white/40 to-transparent"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <Reveal className="text-center max-w-3xl mx-auto mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold font-serif text-brand-dark mb-6">Our Sacred Duties</h2>
+            <div className="flex items-center justify-center gap-4 mb-8 text-brand-orange">
+              <div className="h-px w-16 bg-brand-orange/30"></div>
+              <Sparkles className="w-5 h-5" />
+              <div className="h-px w-16 bg-brand-orange/30"></div>
+            </div>
+            <p className="text-lg text-brand-dark/70 leading-relaxed">
+              Providing unparalleled luxury and devotion to the mother cow, ensuring her ultimate comfort and healing.
+            </p>
+          </Reveal>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Reveal delay={100} className="bg-white rounded-3xl p-8 shadow-[0_5px_20px_rgba(217,164,65,0.15)] hover:shadow-[0_20px_40px_rgba(217,164,65,0.3)] transition-all duration-500 border border-[#D9A441]/30 hover:border-[#D9A441] text-center flex flex-col items-center floating-card">
+              <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center mb-6 text-brand-orange">
+                <Landmark strokeWidth={1.5} className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-brand-dark mb-4 font-serif">Divine Shelter</h3>
+              <p className="text-brand-dark/60 leading-relaxed text-sm">
+                Spacious, climate-controlled havens designed for ultimate comfort and tranquility.
+              </p>
+            </Reveal>
+
+            <Reveal delay={200} className="bg-white rounded-3xl p-8 shadow-[0_5px_20px_rgba(217,164,65,0.15)] hover:shadow-[0_20px_40px_rgba(217,164,65,0.3)] transition-all duration-500 border border-[#D9A441]/30 hover:border-[#D9A441] text-center flex flex-col items-center floating-card">
+              <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 text-blue-500">
+                <Stethoscope strokeWidth={1.5} className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-brand-dark mb-4 font-serif">Medical Excellence</h3>
+              <p className="text-brand-dark/60 leading-relaxed text-sm">
+                State-of-the-art veterinary care, surgeries, and holistic healing therapies.
+              </p>
+            </Reveal>
+
+            <Reveal delay={300} className="bg-white rounded-3xl p-8 shadow-[0_5px_20px_rgba(217,164,65,0.15)] hover:shadow-[0_20px_40px_rgba(217,164,65,0.3)] transition-all duration-500 border border-[#D9A441]/30 hover:border-[#D9A441] text-center flex flex-col items-center floating-card">
+              <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mb-6 text-brand-green">
+                <Leaf strokeWidth={1.5} className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-brand-dark mb-4 font-serif">Organic Nutrition</h3>
+              <p className="text-brand-dark/60 leading-relaxed text-sm">
+                Curated diets of premium organic fodder, fresh herbs, and pure mineral water.
+              </p>
+            </Reveal>
+
+            <Reveal delay={400} className="bg-white rounded-3xl p-8 shadow-[0_5px_20px_rgba(217,164,65,0.15)] hover:shadow-[0_20px_40px_rgba(217,164,65,0.3)] transition-all duration-500 border border-[#D9A441]/30 hover:border-[#D9A441] text-center flex flex-col items-center floating-card">
+              <div className="w-16 h-16 rounded-2xl bg-purple-50 flex items-center justify-center mb-6 text-purple-500">
+                <HeartHandshake strokeWidth={1.5} className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-brand-dark mb-4 font-serif">Soulful Care</h3>
+              <p className="text-brand-dark/60 leading-relaxed text-sm">
+                Daily grooming, devotional music, and gentle affection from dedicated sewadars.
+              </p>
             </Reveal>
           </div>
         </div>
@@ -234,22 +367,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 bg-brand-green text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-[1fr_auto] gap-8 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold">Ready to help today?</h2>
-            <p className="mt-3 text-white/75 max-w-2xl">
-              Donate to the general fund or choose a live campaign. Successful payments are verified by the backend and receipts are generated automatically.
+      <section className="py-24 md:py-32 bg-[#FBF6EE]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Reveal>
+            <div className="flex justify-center mb-6">
+              <Sparkles className="w-10 h-10 text-[#C29243]" strokeWidth={1.5} />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold font-serif text-[#443831] mb-6">
+              सेवा हि परमो धर्मः
+            </h2>
+            <p className="text-lg md:text-xl text-[#6D635B] font-serif leading-relaxed mb-10 max-w-3xl mx-auto">
+              True spirituality lies in selfless service. Touch a life, heal a soul, and find your own inner peace amidst our divine herds.
             </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link to="/donate" className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-orange px-6 py-3 font-bold text-white hover:bg-orange-700">
-              Donate <Heart className="w-5 h-5 fill-white" />
+            <Link to="/volunteer" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C29243] px-8 py-3.5 font-bold text-white hover:bg-[#a87d37] transition-all shadow-sm">
+              Become a gau sevak <Users className="w-5 h-5" />
             </Link>
-            <Link to="/contact" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 font-bold text-brand-green hover:bg-orange-50">
-              Contact Us <Stethoscope className="w-5 h-5" />
-            </Link>
-          </div>
+          </Reveal>
         </div>
       </section>
     </div>

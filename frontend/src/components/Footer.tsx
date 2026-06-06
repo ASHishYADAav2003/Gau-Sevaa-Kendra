@@ -6,8 +6,8 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-brand-green text-white">
       <div className="absolute inset-0">
-        <img src="/beautiful-cow.png" alt="" className="h-full w-full object-cover opacity-15" />
-        <div className="absolute inset-0 bg-brand-green/90" />
+        <img src="/beautiful-cow.png" alt="" className="h-full w-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-brand-green/80" />
       </div>
 
       <Reveal className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">

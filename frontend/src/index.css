@@ -30,3 +30,14 @@
     word-spacing: normal !important;
   }
 }
+
+@keyframes floatAnimation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.floating-card {
+  animation: floatAnimation 4s ease-in-out infinite;
+}
+.floating-card:nth-child(even) {
+  animation-delay: 1.5s;
+}
