@@ -37,6 +37,7 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
+    "morgan": "^1.11.0",
     "prisma": "^6.9.0"
   }
 }

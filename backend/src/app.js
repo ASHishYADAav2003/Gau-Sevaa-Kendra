@@ -6,9 +6,14 @@ import { env } from "./config/env.js";
 import { apiRouter } from "./routes/index.js";
 import { webhookRouter } from "./routes/webhook.routes.js";
 import { errorHandler, notFoundHandler } from "./middleware/error-handler.js";
+import { requestLogger } from "./middleware/request-logger.js";
 
 export const createApp = () => {
   const app = express();
+
+  if (process.env.NODE_ENV === "development") {
+    app.use(requestLogger());
+  }
 
   app.use(
     cors({
