@@ -4,6 +4,7 @@ import { AppError } from "../utils/app-error.js";
 import { getPagination } from "../utils/pagination.js";
 import { getDateRange } from "../utils/date.js";
 import { toPaise } from "../utils/money.js";
+import { buildPublicUploadUrl } from "../utils/file.js";
 
 const buildExpenseWhere = (query) => {
   const where = {};
@@ -34,18 +35,20 @@ const buildExpenseWhere = (query) => {
   return where;
 };
 
-export const createExpense = async (payload) =>
-  prisma.expenseLedger.create({
+export const createExpense = async (payload) => {
+  const { amount, ...rest } = payload;
+  return prisma.expenseLedger.create({
     data: {
-      ...payload,
+      ...rest,
       expenseDate: new Date(payload.expenseDate),
-      amountPaise: toPaise(payload.amount)
+      amountPaise: toPaise(amount)
     },
     include: {
       animal: true,
       campaign: true
     }
   });
+};
 
 export const listExpenses = async (query) => {
   const pagination = getPagination(query);
@@ -84,15 +87,17 @@ export const updateExpense = async (expenseId, payload) => {
     throw new AppError("Expense not found", 404);
   }
 
+  const { amount, ...rest } = payload;
+
   return prisma.expenseLedger.update({
     where: { id: expenseId },
     data: {
-      ...payload,
+      ...rest,
       expenseDate:
         "expenseDate" in payload
           ? new Date(payload.expenseDate)
           : undefined,
-      amountPaise: "amount" in payload ? toPaise(payload.amount) : undefined
+      amountPaise: "amount" in payload ? toPaise(amount) : undefined
     },
     include: {
       animal: true,
@@ -112,6 +117,27 @@ export const deleteExpense = async (expenseId) => {
 
   await prisma.expenseLedger.delete({
     where: { id: expenseId }
+  });
+};
+
+export const uploadExpenseAttachments = async (expenseId, files) => {
+  const expense = await prisma.expenseLedger.findUnique({
+    where: { id: expenseId }
+  });
+
+  if (!expense) {
+    throw new AppError("Expense not found", 404);
+  }
+
+  const attachments = files.map(file => buildPublicUploadUrl(`uploads/expenses/${file.filename}`));
+
+  return prisma.expenseLedger.update({
+    where: { id: expenseId },
+    data: { attachments },
+    include: {
+      animal: true,
+      campaign: true
+    }
   });
 };
 

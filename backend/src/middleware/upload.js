@@ -39,9 +39,17 @@ export const animalImageUpload = multer({
   limits: { files: 5, fileSize: 5 * 1024 * 1024 }
 });
 
+const expenseFileFilter = (req, file, cb) => {
+  if (!file.mimetype.startsWith("image/") && file.mimetype !== "application/pdf") {
+    return cb(new Error("Only images and PDFs are allowed for expenses."));
+  }
+  cb(null, true);
+};
+
 export const expenseAttachmentUpload = multer({
   storage: createStorage("expenses"),
-  limits: { files: 1, fileSize: 10 * 1024 * 1024 }
+  fileFilter: expenseFileFilter,
+  limits: { files: 3, fileSize: 10 * 1024 * 1024 }
 });
 
 export const medicalAttachmentUpload = multer({

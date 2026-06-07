@@ -15,7 +15,6 @@ export const createExpenseSchema = z.object({
   ]),
   vendorName: z.string().trim().optional().nullable(),
   notes: z.string().trim().optional().nullable(),
-  attachmentUrl: z.string().trim().optional().nullable(),
   animalId: z.string().trim().optional().nullable(),
   campaignId: z.string().trim().optional().nullable()
 });

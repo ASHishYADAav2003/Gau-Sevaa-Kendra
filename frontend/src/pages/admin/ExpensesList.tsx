@@ -23,7 +23,6 @@ const emptyForm = {
   category: 'FODDER' as ExpenseCategory,
   vendorName: '',
   notes: '',
-  attachmentUrl: '',
 };
 
 export default function ExpensesList() {
@@ -34,6 +33,7 @@ export default function ExpensesList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [files, setFiles] = useState<File[]>([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -84,6 +84,7 @@ export default function ExpensesList() {
   const openCreateForm = () => {
     setEditingExpense(null);
     setFormData(emptyForm);
+    setFiles([]);
     setMessage('');
     setError('');
     setIsFormOpen(true);
@@ -97,8 +98,8 @@ export default function ExpensesList() {
       category: expense.category,
       vendorName: expense.vendorName || '',
       notes: expense.notes || '',
-      attachmentUrl: expense.attachmentUrl || '',
     });
+    setFiles([]);
     setMessage('');
     setError('');
     setIsFormOpen(true);
@@ -108,6 +109,7 @@ export default function ExpensesList() {
     setIsFormOpen(false);
     setEditingExpense(null);
     setFormData(emptyForm);
+    setFiles([]);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -122,15 +124,23 @@ export default function ExpensesList() {
         category: formData.category,
         vendorName: formData.vendorName || null,
         notes: formData.notes || null,
-        attachmentUrl: formData.attachmentUrl || null,
       };
+
+      let savedExpenseId = '';
 
       if (editingExpense) {
         await expenseApi.update(editingExpense.id, payload);
+        savedExpenseId = editingExpense.id;
         setMessage('Expense updated.');
       } else {
-        await expenseApi.create(payload);
+        const created = await expenseApi.create(payload);
+        savedExpenseId = created.id;
         setMessage('Expense added.');
+      }
+
+      if (files.length > 0) {
+        await expenseApi.uploadAttachments(savedExpenseId, files);
+        setMessage(prev => prev + ' Attachments uploaded successfully.');
       }
 
       closeForm();
@@ -217,9 +227,30 @@ export default function ExpensesList() {
               <input className="input-field" value={formData.vendorName} onChange={(event) => setFormData({ ...formData, vendorName: event.target.value })} />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Attachment URL</label>
-              <input className="input-field" placeholder="Optional bill/receipt URL" value={formData.attachmentUrl} onChange={(event) => setFormData({ ...formData, attachmentUrl: event.target.value })} />
-              <p className="text-xs text-gray-500 mt-1">Backend currently stores an attachment URL; file upload routes are not implemented yet.</p>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Attachments (Max 3, Images/PDF)</label>
+              <input
+                type="file"
+                multiple
+                accept="image/*,application/pdf"
+                className="input-field"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    const selectedFiles = Array.from(e.target.files);
+                    if (selectedFiles.length > 3) {
+                      alert('You can only upload up to 3 attachments.');
+                      e.target.value = '';
+                      setFiles([]);
+                    } else {
+                      setFiles(selectedFiles);
+                    }
+                  }
+                }}
+              />
+              {editingExpense && editingExpense.attachments && editingExpense.attachments.length > 0 && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Uploading new files will replace the existing {editingExpense.attachments.length} attachment(s).
+                </p>
+              )}
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
@@ -306,8 +337,14 @@ export default function ExpensesList() {
                   </td>
                   <td className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">{formatInr(expense.amountPaise)}</td>
                   <td className="px-6 py-4">
-                    {expense.attachmentUrl ? (
-                      <a href={expense.attachmentUrl} target="_blank" rel="noreferrer" className="text-brand-orange hover:underline">Open</a>
+                    {expense.attachments && expense.attachments.length > 0 ? (
+                      <div className="flex flex-col gap-1 text-xs">
+                        {expense.attachments.map((url, idx) => (
+                          <a key={idx} href={url} target="_blank" rel="noreferrer" className="text-brand-orange hover:underline">
+                            Open File {idx + 1}
+                          </a>
+                        ))}
+                      </div>
                     ) : (
                       <span className="text-gray-400">-</span>
                     )}

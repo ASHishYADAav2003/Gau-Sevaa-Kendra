@@ -224,7 +224,6 @@ export const expenseApi = {
     category: ExpenseCategory;
     vendorName?: string | null;
     notes?: string | null;
-    attachmentUrl?: string | null;
     animalId?: string | null;
     campaignId?: string | null;
   }) => {
@@ -237,7 +236,6 @@ export const expenseApi = {
     category: ExpenseCategory;
     vendorName: string | null;
     notes: string | null;
-    attachmentUrl: string | null;
     animalId: string | null;
     campaignId: string | null;
   }>) => {
@@ -246,6 +244,14 @@ export const expenseApi = {
   },
   delete: async (id: string) => {
     const { data } = await apiClient.delete<{ message: string }>(`/admin/expenses/${id}`);
+    return data;
+  },
+  uploadAttachments: async (id: string, files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('attachments', file));
+    const { data } = await apiClient.post(`/admin/expenses/${id}/attachments`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return data;
   },
   export: async () => {

@@ -4,7 +4,8 @@ import {
   deleteExpense,
   exportExpenses,
   listExpenses,
-  updateExpense
+  updateExpense,
+  uploadExpenseAttachments
 } from "../services/expense.service.js";
 
 export const adminCreateExpense = asyncHandler(async (req, res) => {
@@ -38,4 +39,9 @@ export const adminExportExpenses = asyncHandler(async (req, res) => {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   );
   res.status(200).send(buffer);
+});
+
+export const adminUploadExpenseAttachments = asyncHandler(async (req, res) => {
+  const result = await uploadExpenseAttachments(req.params.id, req.files || []);
+  res.status(200).json(result);
 });

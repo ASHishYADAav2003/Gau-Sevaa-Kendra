@@ -145,7 +145,7 @@ export interface Expense {
   category: ExpenseCategory;
   vendorName?: string | null;
   notes?: string | null;
-  attachmentUrl?: string | null;
+  attachments?: string[];
   animalId?: string | null;
   campaignId?: string | null;
   animal?: Animal | null;
