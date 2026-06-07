@@ -63,9 +63,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
-            <button aria-label="Switch Language" className={`hidden sm:block text-sm font-semibold border px-3 py-1.5 rounded-full transition-all focus:outline-none hover:-translate-y-0.5 ${(scrolled || !isHome) ? 'text-brand-dark/70 border-brand-orange/30 hover:border-brand-orange hover:text-brand-orange' : 'text-white/80 border-white/30 hover:border-white hover:text-white'}`}>
-              EN | HI
-            </button>
+
             <Link to="/donate" aria-label="Donate Now" className="bg-brand-orange hover:bg-[#b3832d] text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold flex items-center gap-1.5 md:gap-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-orange hover:shadow-[0_0_20px_rgba(217,164,65,0.6)] transform hover:scale-105 transition-all duration-300">
               <Heart className="h-4 w-4 fill-white" aria-hidden="true" />
               Donate
@@ -101,11 +99,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="mt-4 pt-4 border-t border-gray-100 px-4">
-            <button className="w-full py-2.5 border border-brand-orange/30 text-brand-orange rounded-lg font-semibold hover:bg-brand-orange hover:text-white transition-colors">
-              Language: EN | HI
-            </button>
-          </div>
+
         </div>
       )}
     </nav>

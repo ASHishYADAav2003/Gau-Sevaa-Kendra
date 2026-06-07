@@ -128,7 +128,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <Reveal>
               <div className="relative rounded-3xl overflow-hidden aspect-square shadow-2xl group">
-                <img src="/hero-cow-calf.png" alt="Sanctuary of peace" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src="/sanctuary-landscape.jpeg" alt="Sanctuary of peace" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="absolute bottom-8 left-8 text-white">
                   <div className="mb-3">

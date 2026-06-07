@@ -107,14 +107,27 @@ export default function AddAnimal() {
                 </div>
               </div>
               <Field label="Breed" value={formData.breed} onChange={(value) => setFormData({ ...formData, breed: value })} />
-              <Field label="Gender" value={formData.gender} onChange={(value) => setFormData({ ...formData, gender: value })} />
+              <div>
+                <label className="text-sm font-medium text-gray-700">Gender</label>
+                <select className="input-field mt-1" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })}>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
               <Field label="Approximate Age (years)" type="number" value={formData.ageYears} onChange={(value) => setFormData({ ...formData, ageYears: value })} />
               <div>
                 <label className="text-sm font-medium text-gray-700">Rescue Date</label>
                 <input type="date" className="input-field mt-1" value={formData.rescueDate} onChange={(e) => setFormData({ ...formData, rescueDate: e.target.value })} />
               </div>
               <Field label="Shed / Location" value={formData.shedLocation} onChange={(value) => setFormData({ ...formData, shedLocation: value })} />
-              <Field label="Health Status" value={formData.healthStatus} onChange={(value) => setFormData({ ...formData, healthStatus: value })} />
+              <div>
+                <label className="text-sm font-medium text-gray-700">Health Status</label>
+                <select className="input-field mt-1" value={formData.healthStatus} onChange={(e) => setFormData({ ...formData, healthStatus: e.target.value })}>
+                  <option value="Healthy">Healthy</option>
+                  <option value="Under treatment">Under treatment</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Operational Status</label>
                 <select className="input-field mt-1" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>

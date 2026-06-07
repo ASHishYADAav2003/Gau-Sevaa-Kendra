@@ -54,7 +54,12 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-white/80">
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-orange" />
-                <span>Gau Seva Kendra<br />Vrindavan, Uttar Pradesh</span>
+                <span>
+                  H.NO.29, KHATIPURA,<br />
+                  PO: JAGAR, JAGAR,<br />
+                  KARAULI, HINDAUN,<br />
+                  RAJASTHAN, INDIA, 322236
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 shrink-0 text-brand-orange" />

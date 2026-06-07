@@ -1,16 +1,22 @@
 import { Navigate, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { useEffect } from 'react';
-import { LayoutDashboard, Heart, IndianRupee, Banknote, Settings, LogOut, ChevronLeft, Target } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { LayoutDashboard, Heart, IndianRupee, Banknote, Settings, LogOut, ChevronLeft, Target, Menu } from 'lucide-react';
 
 export default function AdminLayout() {
   const { isAuthenticated, isCheckingSession, checkSession, logout } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     checkSession();
   }, [checkSession]);
+
+  // Close sidebar on route change on mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   if (isCheckingSession) {
     return (
@@ -48,9 +54,17 @@ export default function AdminLayout() {
   )?.name || 'Dashboard';
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex font-sans">
+    <div className="min-h-screen bg-[#f8f9fa] flex font-sans overflow-hidden">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#1a3626] flex flex-col fixed h-full z-10 text-white/80">
+      <aside className={`w-64 bg-[#1a3626] flex flex-col fixed h-full z-50 text-white/80 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="h-16 flex items-center px-6 mb-4 mt-2">
           <div className="flex items-center gap-3">
             <div className="bg-brand-orange p-1.5 rounded-md">
@@ -61,7 +75,9 @@ export default function AdminLayout() {
               <p className="text-[10px] text-white/60">गौ सेवा केंद्र</p>
             </div>
           </div>
-          <ChevronLeft className="w-5 h-5 ml-auto text-white/40 cursor-pointer hover:text-white" />
+          <button onClick={() => setIsSidebarOpen(false)} className="ml-auto md:hidden text-white/40 hover:text-white">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
         </div>
         
         <nav className="flex-1 overflow-y-auto pb-4 custom-scrollbar">
@@ -110,9 +126,12 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 flex flex-col min-h-screen">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center px-6 sticky top-0 z-10 shadow-sm">
-          <div className="flex items-center gap-4">
+      <main className="flex-1 md:ml-64 flex flex-col min-h-screen max-w-full">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center px-4 md:px-6 sticky top-0 z-10 shadow-sm">
+          <div className="flex items-center gap-3 md:gap-4">
+            <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-gray-500 hover:text-gray-700 transition" title="Open Menu">
+              <Menu className="w-6 h-6" />
+            </button>
             <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600 transition" title="Go Back">
               <ChevronLeft className="w-5 h-5" />
             </button>
