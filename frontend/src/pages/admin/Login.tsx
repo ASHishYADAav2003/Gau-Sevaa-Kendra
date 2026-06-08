@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { ShieldCheck, Lock, ArrowLeft, User, Activity, Heart, Home, Users, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Lock, ArrowLeft, User, CheckCircle2 } from 'lucide-react';
 import { authApi } from '../../api/services';
 import { getApiErrorMessage } from '../../api/client';
 
