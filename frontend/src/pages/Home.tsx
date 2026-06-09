@@ -220,12 +220,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-orange-100 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Metric icon={<HomeIcon className="w-5 h-5" />} label="Animals registered" value={animals.length.toLocaleString('en-IN')} />
-          <Metric icon={<Target className="w-5 h-5" />} label="Active campaigns" value={campaigns.length.toLocaleString('en-IN')} />
-          <Metric icon={<IndianRupee className="w-5 h-5" />} label="Campaign funds raised" value={formatInr(totalRaisedPaise)} />
-          <Metric icon={<Users className="w-5 h-5" />} label="Public records" value="Backend live" />
+      <section className="py-16 bg-white relative z-10 -mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <Reveal delay={100}>
+            <Metric icon={<HomeIcon className="w-8 h-8" />} label="Animals registered" value={animals.length.toLocaleString('en-IN')} />
+          </Reveal>
+          <Reveal delay={200}>
+            <Metric icon={<Target className="w-8 h-8" />} label="Active campaigns" value={campaigns.length.toLocaleString('en-IN')} />
+          </Reveal>
+          <Reveal delay={300}>
+            <Metric icon={<IndianRupee className="w-8 h-8" />} label="Campaign funds raised" value={formatInr(totalRaisedPaise)} />
+          </Reveal>
         </div>
       </section>
 
@@ -243,9 +248,9 @@ export default function HomePage() {
                 <div className="h-px w-12 bg-brand-orange" />
                 <span className="text-sm font-bold uppercase tracking-wider text-brand-orange">Featured Campaign</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark">A landing page should show what needs help now.</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark">Support Our Sacred Cows</h2>
               <p className="mt-4 text-brand-dark/70 leading-7">
-                Mark a campaign as featured in the admin panel to control the first campaign donors see here. If no campaign is featured, the newest active campaign is shown.
+                Every contribution helps us provide better shelter, food, and medical care for our rescued cows. Join our mission to protect and nurture these divine beings by supporting our active campaigns.
               </p>
             </Reveal>
 
@@ -296,7 +301,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Active Campaigns</h2>
-              <p className="mt-3 text-gray-600">Campaign data comes directly from the backend and updates with paid donations.</p>
+              <p className="mt-3 text-gray-600">Explore our ongoing initiatives to provide emergency medical aid, better fodder, and safe shelter for our cows.</p>
             </div>
             <Link to="/campaigns" className="inline-flex items-center gap-2 font-semibold text-brand-green hover:text-brand-orange">
               See all campaigns <ArrowRight className="w-4 h-4" />
@@ -333,7 +338,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Animals In Care</h2>
-              <p className="mt-3 text-gray-600">These records are loaded from the public animal API, not browser storage.</p>
+              <p className="mt-3 text-gray-600">Meet the beautiful souls under our care. Each cow has a unique story of rescue and rehabilitation.</p>
             </div>
             <Link to="/campaigns" className="inline-flex items-center gap-2 font-semibold text-brand-green hover:text-brand-orange">
               Support a campaign <ArrowRight className="w-4 h-4" />
@@ -391,12 +396,12 @@ export default function HomePage() {
 
 function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-orange-100 bg-orange-50/50 p-4">
-      <div className="rounded-lg bg-white p-3 text-brand-orange shadow-sm">{icon}</div>
-      <div>
-        <p className="text-xl font-bold text-gray-900">{value}</p>
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{label}</p>
+    <div className="flex flex-col items-center justify-center p-8 rounded-3xl bg-white border border-[#D9A441]/20 shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(217,164,65,0.2)] hover:-translate-y-1 transition-all duration-300 group">
+      <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center mb-4 text-brand-orange group-hover:scale-110 transition-transform duration-300">
+        {icon}
       </div>
+      <p className="text-4xl font-bold text-brand-dark mb-2">{value}</p>
+      <p className="text-sm font-bold uppercase tracking-wider text-brand-dark/50 text-center">{label}</p>
     </div>
   );
 }
