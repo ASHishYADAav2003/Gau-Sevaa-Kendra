@@ -35,9 +35,9 @@ export default function Navbar() {
             <Link to="/" className="flex items-center gap-3 relative group">
               <div className="absolute inset-0 bg-brand-orange/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <img 
-                src="/logo.jpeg" 
+                src="/logo_transparent.png" 
                 alt="Gau Seva Kendra Logo" 
-                className={`w-auto object-contain rounded-full mix-blend-multiply contrast-[1.1] brightness-[1.05] transition-all duration-500 relative z-10 ${scrolled ? 'h-12 md:h-14' : 'h-14 md:h-16'}`} 
+                className={`object-contain transition-all duration-500 relative z-10 ${scrolled ? 'h-16 md:h-20' : 'h-20 md:h-24'}`} 
               />
             </Link>
           </div>

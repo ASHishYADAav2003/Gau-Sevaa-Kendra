@@ -54,8 +54,8 @@ export default function AdminLogin() {
           </Link>
 
           <div className="flex items-center gap-4 mb-10">
-            <div className="bg-white p-2 rounded-xl">
-              <img src="/logo.jpeg" alt="Logo" className="h-12 w-12 object-contain rounded-lg" />
+            <div>
+              <img src="/logo_transparent.png" alt="Logo" className="object-contain h-24 w-24 md:h-32 md:w-32 drop-shadow-xl" />
             </div>
             <div className="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
               <span className="relative flex h-2.5 w-2.5">

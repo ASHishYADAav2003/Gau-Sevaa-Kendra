@@ -14,7 +14,7 @@ const progressPercent = (campaign: Campaign) =>
 const campaignImage = (campaign: Campaign) =>
   campaign.images?.[0]?.imageUrl || campaign.animal?.images?.[0]?.imageUrl || '/hero-cow-calf.png';
 
-const animalImage = (animal: Animal) => animal.images?.[0]?.imageUrl || '/logo.jpeg';
+const animalImage = (animal: Animal) => animal.images?.[0]?.imageUrl || '/logo_transparent.png';
 
 export default function HomePage() {
   const [orgName, setOrgName] = useState('Gau Seva Kendra');

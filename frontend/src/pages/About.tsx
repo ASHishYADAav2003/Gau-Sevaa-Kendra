@@ -96,9 +96,9 @@ export default function About() {
           <Reveal delay={400} className="order-1 md:order-2">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
               <img 
-                src="https://images.unsplash.com/photo-1544298711-2d93e15777bd?auto=format&fit=crop&q=80" 
+                src="/temple-cows.jpeg" 
                 alt="Cows in gaushaala" 
-                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full min-h-[400px] object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 to-transparent flex items-end p-8">
                 <p className="text-white text-xl font-medium">A sanctuary of peace and protection.</p>
@@ -124,25 +124,25 @@ export default function About() {
               {
                 title: "Cows",
                 count: "120+ Rescued",
-                image: "https://images.unsplash.com/photo-1570044570183-fa496e579308?auto=format&fit=crop&q=80",
+                image: "/beautiful-cow.png",
                 color: "from-[#e2a85c]"
               },
               {
                 title: "Calves",
                 count: "45+ Rescued",
-                image: "https://images.unsplash.com/photo-1629237691653-f7253507d4b4?auto=format&fit=crop&q=80",
+                image: "/calf-rescue.jpeg",
                 color: "from-[#d38b5d]"
               },
               {
                 title: "Buffaloes",
                 count: "30+ Rescued",
-                image: "https://images.unsplash.com/photo-1596784347781-b257121683cb?auto=format&fit=crop&q=80",
+                image: "/temple-cows.jpeg",
                 color: "from-[#8b9d77]"
               },
               {
                 title: "Dogs",
                 count: "80+ Rescued",
-                image: "https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80",
+                image: "/vet-care.jpeg",
                 color: "from-[#b07d66]"
               }
             ].map((animal, idx) => (

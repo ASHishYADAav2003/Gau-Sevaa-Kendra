@@ -13,8 +13,8 @@ export default function Footer() {
       <Reveal className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2">
-            <Link to="/" className="inline-flex items-center gap-3 rounded-lg bg-white p-2 mb-5">
-              <img src="/logo.jpeg" alt="Gau Seva Kendra Logo" className="h-14 w-auto object-contain" />
+            <Link to="/" className="inline-flex items-center gap-3 mb-5">
+              <img src="/logo_transparent.png" alt="Gau Seva Kendra Logo" className="object-contain h-20 md:h-24" />
             </Link>
             <p className="max-w-md text-sm leading-7 text-white/75">
               A donation and care management platform for animal rescue, campaign transparency, expenses, and secure donor receipts.
