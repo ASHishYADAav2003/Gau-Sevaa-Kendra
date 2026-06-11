@@ -1,6 +1,11 @@
+import { Helmet } from 'react-helmet-async';
+
 export default function PrivacyPolicy() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
+      <Helmet title="Privacy Policy | Gau Seva Kendra">
+        <meta name="description" content="Learn how Gau Seva Kendra collects, uses, protects, and shares donor and visitor information." />
+      </Helmet>
       <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-8">Last Updated: {new Date().toLocaleDateString()}</p>

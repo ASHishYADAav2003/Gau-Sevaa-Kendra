@@ -60,11 +60,19 @@ export default function HomePage() {
       </Helmet>
 
       <section className="relative min-h-[800px] flex items-center overflow-hidden">
-        <img src="/hero-cow-calf.png" alt="Cow and calf at the sanctuary" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src="/hero-cow-calf.webp"
+          alt="A rescued cow and calf resting at the sanctuary"
+          width="1024"
+          height="1024"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full pt-32">
           <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
-            <Reveal>
+            <div className="animate-fade-in-up">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-md px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-white/30 uppercase tracking-wider">
                 <Sparkles className="w-4 h-4 text-orange-200" /> A SACRED JOURNEY OF COMPASSION
               </span>
@@ -83,7 +91,7 @@ export default function HomePage() {
                   Discover Our Soul <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
-            </Reveal>
+            </div>
 
             <Reveal delay={200}>
               <div className="rounded-2xl bg-transparent border border-white/20 p-8 text-white relative overflow-hidden">

@@ -5,8 +5,7 @@ import Reveal from '../components/Reveal';
 export default function Contact() {
   return (
     <div className="min-h-screen bg-brand-beige pt-24 pb-16">
-      <Helmet>
-        <title>Contact Us | Ganpati Gaushala Seva Foundation</title>
+      <Helmet title="Contact Us | Ganpati Gaushala Seva Foundation">
         <meta name="description" content="Get in touch with Ganpati Gaushala Seva Foundation for donations, volunteering, or general inquiries." />
       </Helmet>
 

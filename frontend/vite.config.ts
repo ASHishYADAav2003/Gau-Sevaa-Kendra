@@ -11,5 +11,28 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    target: 'esnext',
+    minify: 'terser',
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('zustand')) {
+              return 'vendor';
+            }
+            if (id.includes('lucide-react') || id.includes('react-helmet-async')) {
+              return 'ui';
+            }
+            if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) {
+              return 'form';
+            }
+            return 'modules';
+          }
+        }
+      }
+    }
   }
 })

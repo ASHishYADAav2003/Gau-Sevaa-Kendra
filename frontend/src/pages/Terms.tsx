@@ -1,6 +1,11 @@
+import { Helmet } from 'react-helmet-async';
+
 export default function Terms() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
+      <Helmet title="Terms and Conditions | Gau Seva Kendra">
+        <meta name="description" content="Read the terms governing donations, campaign fund allocation, and use of the Gau Seva Kendra website." />
+      </Helmet>
       <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Terms and Conditions</h1>
         

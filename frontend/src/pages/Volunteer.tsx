@@ -19,8 +19,7 @@ export default function Volunteer() {
 
   return (
     <div className="bg-brand-beige min-h-screen py-16">
-      <Helmet>
-        <title>Volunteer With Us | Gau Seva Kendra</title>
+      <Helmet title="Volunteer With Us | Gau Seva Kendra">
         <meta name="description" content="Join our community of passionate volunteers. Dedicate your time and skills to the noble cause of cow protection and care." />
       </Helmet>
 

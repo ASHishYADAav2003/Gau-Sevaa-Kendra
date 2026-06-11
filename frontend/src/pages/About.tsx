@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { Heart, Shield, Leaf, Activity, Users, CheckCircle2 } from 'lucide-react';
 import Reveal from '../components/Reveal';
+import { Link } from 'react-router-dom';
 
 export default function About() {
   return (
@@ -18,7 +19,7 @@ export default function About() {
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-green/30 rounded-full blur-[100px]"></div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center flex flex-col items-center">
-          <Reveal className="flex flex-col items-center">
+          <div className="flex flex-col items-center animate-fade-in-up">
             <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-brand-orange font-medium mb-8">
               <Heart className="w-4 h-4 fill-brand-orange" /> Every contribution saves a life
             </div>
@@ -30,17 +31,17 @@ export default function About() {
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-6 w-full max-w-2xl">
-              <a href="/donate" className="group relative bg-gradient-to-r from-brand-orange to-orange-600 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(234,88,12,0.6)] hover:-translate-y-1 flex items-center justify-center gap-3 overflow-hidden flex-1">
+              <Link to="/donate" className="group relative bg-gradient-to-r from-brand-orange to-orange-600 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(234,88,12,0.6)] hover:-translate-y-1 flex items-center justify-center gap-3 overflow-hidden flex-1">
                 <span className="absolute inset-0 w-full h-full bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"></span>
                 <Heart className="w-6 h-6 fill-white relative z-10 motion-safe:animate-pulse" /> 
                 <span className="relative z-10">Donate Now & Save Lives</span>
-              </a>
-              <a href="/volunteer" className="group border-2 border-white/30 bg-white/5 backdrop-blur-sm hover:bg-white/15 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:border-white/60 flex items-center justify-center gap-3 flex-1">
+              </Link>
+              <Link to="/volunteer" className="group border-2 border-white/30 bg-white/5 backdrop-blur-sm hover:bg-white/15 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:border-white/60 flex items-center justify-center gap-3 flex-1">
                 <Users className="w-6 h-6 group-hover:scale-110 transition-transform" /> 
                 <span>Join as Volunteer</span>
-              </a>
+              </Link>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -124,40 +125,42 @@ export default function About() {
               {
                 title: "Cows",
                 count: "120+ Rescued",
-                image: "/beautiful-cow.png",
+                image: "/beautiful-cow.webp",
                 color: "from-[#e2a85c]"
               },
               {
                 title: "Calves",
                 count: "45+ Rescued",
-                image: "/calf-rescue.jpeg",
+                image: "/calf-rescue.webp",
                 color: "from-[#d38b5d]"
               },
               {
                 title: "Buffaloes",
                 count: "30+ Rescued",
-                image: "/temple-cows.jpeg",
+                image: "/temple-cows.webp",
                 color: "from-[#8b9d77]"
               },
               {
-                title: "Dogs",
+                title: "Dogs & Cats",
                 count: "80+ Rescued",
-                image: "/vet-care.jpeg",
-                color: "from-[#b07d66]"
+                image: "/vet-care.webp",
+                color: "from-[#6a7f65]"
               }
-            ].map((animal, idx) => (
+            ].map((item, idx) => (
               <Reveal key={idx} delay={idx * 150}>
                 <div className="group relative h-96 rounded-2xl overflow-hidden shadow-lg cursor-pointer">
                   <img 
-                    src={animal.image} 
-                    alt={animal.title} 
+                    src={item.image} 
+                    alt={item.title} 
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${animal.color} via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-t ${item.color} via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300`}></div>
                   <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    <h3 className="text-3xl font-bold text-white mb-1 drop-shadow-md">{animal.title}</h3>
+                    <h3 className="text-3xl font-bold text-white mb-1 drop-shadow-md">{item.title}</h3>
                     <p className="text-white/90 font-medium drop-shadow-sm flex items-center gap-2">
-                      <Shield className="w-4 h-4" /> {animal.count}
+                      <Shield className="w-4 h-4" /> {item.count}
                     </p>
                   </div>
                 </div>

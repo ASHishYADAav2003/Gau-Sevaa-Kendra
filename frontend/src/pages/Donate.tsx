@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Heart, ShieldCheck } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { campaignApi, donationApi, publicApi } from '../api/services';
@@ -24,6 +24,12 @@ type DonationFormData = {
   taxReceiptRequested: boolean;
   isAnonymousPublic: boolean;
   consent: boolean;
+};
+
+type RazorpayPaymentResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
 };
 
 const loadRazorpayScript = () =>
@@ -135,7 +141,7 @@ export default function Donate() {
           email: data.email,
           contact: data.phone,
         },
-        handler: async (response: any) => {
+        handler: async (response: RazorpayPaymentResponse) => {
           try {
             await donationApi.verify({
               donationId: order.donationId,
@@ -166,8 +172,7 @@ export default function Donate() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <Helmet>
-        <title>Make a Donation | Gau Seva Kendra</title>
+      <Helmet title="Make a Donation | Gau Seva Kendra">
         <meta name="description" content="Secure online donation to Gau Seva Kendra. Choose general fund or a specific campaign. Tax receipts available." />
       </Helmet>
 
@@ -186,27 +191,31 @@ export default function Donate() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 space-y-8">
-          {error && <div className="rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>}
-          {notice && <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">{notice}</div>}
+          {error && <div role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>}
+          {notice && <div role="status" aria-live="polite" className="rounded-lg bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">{notice}</div>}
 
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-4">1. Donation Details</h2>
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <fieldset className="grid grid-cols-2 gap-4 mb-6">
+              <legend className="sr-only">Choose donation type</legend>
               <label className={`border-2 rounded-xl p-4 cursor-pointer transition flex items-center justify-center font-bold ${donationType === 'GENERAL' ? 'border-primary-500 bg-orange-50 text-primary-700' : 'border-gray-200 text-gray-600 hover:border-orange-200'}`}>
-                <input type="radio" value="GENERAL" className="hidden" {...register('donationType')} />
+                <input type="radio" value="GENERAL" className="sr-only" {...register('donationType')} />
                 General Fund
               </label>
               <label className={`border-2 rounded-xl p-4 cursor-pointer transition flex items-center justify-center font-bold ${donationType === 'CAMPAIGN' ? 'border-primary-500 bg-orange-50 text-primary-700' : 'border-gray-200 text-gray-600 hover:border-orange-200'}`}>
-                <input type="radio" value="CAMPAIGN" className="hidden" {...register('donationType')} />
+                <input type="radio" value="CAMPAIGN" className="sr-only" {...register('donationType')} />
                 Specific Campaign
               </label>
-            </div>
+            </fieldset>
 
             {donationType === 'CAMPAIGN' && (
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Active Campaign *</label>
+                <label htmlFor="campaignId" className="block text-sm font-semibold text-gray-700 mb-2">Active Campaign *</label>
                 <select
+                  id="campaignId"
                   className="input-field"
+                  aria-invalid={Boolean(errors.campaignId)}
+                  aria-describedby={errors.campaignId ? 'campaign-error' : undefined}
                   {...register('campaignId', {
                     validate: (value) => donationType !== 'CAMPAIGN' || Boolean(value) || 'Please select a campaign',
                   })}
@@ -219,18 +228,19 @@ export default function Donate() {
                   ))}
                 </select>
                 {campaigns.length === 0 && <p className="text-xs text-gray-500 mt-2">No active campaigns are available. Please use the general fund.</p>}
-                {errors.campaignId && <p className="text-red-500 text-sm mt-1">{errors.campaignId.message}</p>}
+                {errors.campaignId && <p id="campaign-error" className="text-red-700 text-sm mt-1">{errors.campaignId.message}</p>}
               </div>
             )}
 
             <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Select Amount (Rs.)</label>
+              <label htmlFor="amount" className="block text-sm font-semibold text-gray-700 mb-2">Select Amount (Rs.)</label>
               <div className="flex flex-wrap gap-3 mb-3">
                 {predefinedAmounts.map(amt => (
                   <button
                     key={amt}
                     type="button"
                     onClick={() => setValue('amount', amt)}
+                    aria-pressed={currentAmount === amt}
                     className={`px-5 py-2 rounded-full border text-sm font-bold transition ${currentAmount === amt ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-gray-300 text-gray-700 hover:border-primary-500'}`}
                   >
                     Rs. {amt}
@@ -238,13 +248,17 @@ export default function Donate() {
                 ))}
               </div>
               <input
+                id="amount"
                 type="number"
                 min="1"
+                inputMode="numeric"
+                aria-invalid={Boolean(errors.amount)}
+                aria-describedby={errors.amount ? 'amount-error' : undefined}
                 className="input-field font-semibold text-lg"
                 placeholder="Custom Amount"
                 {...register('amount', { required: 'Amount is required', min: { value: 1, message: 'Minimum Rs. 1' } })}
               />
-              {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
+              {errors.amount && <p id="amount-error" className="text-red-700 text-sm mt-1">{errors.amount.message}</p>}
             </div>
           </section>
 
@@ -252,25 +266,29 @@ export default function Donate() {
             <h2 className="text-xl font-bold text-gray-900 mb-4">2. Your Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
-                <input type="text" className="input-field" placeholder="Ram Sharma" {...register('fullName', { required: 'Name is required' })} />
-                {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>}
+                <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
+                <input id="fullName" type="text" autoComplete="name" aria-invalid={Boolean(errors.fullName)} aria-describedby={errors.fullName ? 'name-error' : undefined} className="input-field" placeholder="Ram Sharma" {...register('fullName', { required: 'Name is required' })} />
+                {errors.fullName && <p id="name-error" className="text-red-700 text-sm mt-1">{errors.fullName.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
-                <input type="tel" className="input-field" placeholder="+91 98765 43210" {...register('phone')} />
+                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
+                <input id="phone" type="tel" autoComplete="tel" className="input-field" placeholder="+91 98765 43210" {...register('phone')} />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
                   Email Address {taxReceiptRequested && '*'}
                 </label>
                 <input
+                  id="email"
                   type="email"
+                  autoComplete="email"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? 'email-error' : undefined}
                   className="input-field"
                   placeholder="ram@example.com"
                   {...register('email', { required: taxReceiptRequested ? 'Email is required for tax receipt' : false })}
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                {errors.email && <p id="email-error" className="text-red-700 text-sm mt-1">{errors.email.message}</p>}
               </div>
             </div>
 
@@ -293,9 +311,9 @@ export default function Donate() {
 
               <label className="flex items-start gap-3 cursor-pointer pt-4 border-t border-gray-100">
                 <input type="checkbox" className="mt-1 h-4 w-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500" {...register('consent', { required: 'You must agree to the terms' })} />
-                <span className="text-sm text-gray-700">I agree to the <a href="/terms" className="text-primary-600 hover:underline">Terms</a> and <a href="/privacy" className="text-primary-600 hover:underline">Privacy Policy</a>.</span>
+                <span className="text-sm text-gray-700">I agree to the <Link to="/terms" className="text-primary-600 hover:underline">Terms</Link> and <Link to="/privacy" className="text-primary-600 hover:underline">Privacy Policy</Link>.</span>
               </label>
-              {errors.consent && <p className="text-red-500 text-sm">{errors.consent.message}</p>}
+              {errors.consent && <p role="alert" className="text-red-700 text-sm">{errors.consent.message}</p>}
             </div>
           </section>
 

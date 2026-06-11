@@ -59,8 +59,7 @@ export default function ThankYou() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
-      <Helmet>
-        <title>Donation Status | Gau Seva Kendra</title>
+      <Helmet title="Donation Status | Gau Seva Kendra">
       </Helmet>
 
       <div className="bg-white border border-orange-100 rounded-2xl shadow-xl p-8 text-center">

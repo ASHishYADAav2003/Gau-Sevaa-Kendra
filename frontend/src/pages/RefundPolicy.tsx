@@ -1,6 +1,11 @@
+import { Helmet } from 'react-helmet-async';
+
 export default function RefundPolicy() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
+      <Helmet title="Refund and Cancellation Policy | Gau Seva Kendra">
+        <meta name="description" content="Review the Gau Seva Kendra donation refund, cancellation, and failed transaction policy." />
+      </Helmet>
       <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Refund & Cancellation Policy</h1>
         <div className="space-y-6 text-gray-700 leading-relaxed">

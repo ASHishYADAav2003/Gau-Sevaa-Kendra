@@ -55,27 +55,26 @@ export default function CampaignDetail() {
   };
 
   if (isLoading) {
-    return <div className="max-w-5xl mx-auto px-4 py-16 text-gray-500">Loading campaign...</div>;
+    return <div role="status" aria-live="polite" className="max-w-5xl mx-auto px-4 py-16 text-gray-500">Loading campaign...</div>;
   }
 
   if (error || !campaign) {
-    return <div className="max-w-5xl mx-auto px-4 py-16 text-red-700">{error || 'Campaign not found.'}</div>;
+    return <div role="alert" className="max-w-5xl mx-auto px-4 py-16 text-red-700">{error || 'Campaign not found.'}</div>;
   }
 
   const percent = progressPercent(campaign);
-  const image = campaign.images?.[0]?.imageUrl || campaign.animal?.images?.[0]?.imageUrl || '/hero-cow-calf.png';
+  const image = campaign.images?.[0]?.imageUrl || campaign.animal?.images?.[0]?.imageUrl || '/hero-cow-calf.webp';
 
   return (
     <div className="bg-brand-beige min-h-screen py-12">
-      <Helmet>
-        <title>{campaign.titleEn} | Gau Seva Kendra</title>
+      <Helmet title={`${campaign.titleEn} | Gau Seva Kendra`}>
         <meta name="description" content={campaign.shortSummaryEn} />
       </Helmet>
 
       <article className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-[1.4fr_0.8fr] gap-8 items-start">
           <div className="bg-white rounded-xl border border-orange-100 shadow-sm overflow-hidden">
-            <img src={image} alt={campaign.titleEn} className="w-full h-[420px] object-cover" />
+            <img src={image} alt={campaign.titleEn} width="896" height="420" fetchPriority="high" decoding="async" className="w-full h-[420px] object-cover" />
             <div className="p-6 md:p-8">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{campaign.titleEn}</h1>
               <p className="text-lg text-gray-700 leading-relaxed mb-6">{campaign.shortSummaryEn}</p>
@@ -104,7 +103,14 @@ export default function CampaignDetail() {
                 <span>{formatInr(campaign.raisedAmountPaise)} raised</span>
                 <span>{percent}%</span>
               </div>
-              <div className="h-3 rounded-full bg-orange-100 overflow-hidden mb-3">
+              <div
+                className="h-3 rounded-full bg-orange-100 overflow-hidden mb-3"
+                role="progressbar"
+                aria-label={`${campaign.titleEn} fundraising progress`}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={percent}
+              >
                 <div className="h-full bg-brand-orange" style={{ width: `${percent}%` }} />
               </div>
               <p className="text-sm text-gray-500 mb-6">Goal: {formatInr(campaign.targetAmountPaise)}</p>
@@ -128,13 +134,16 @@ export default function CampaignDetail() {
                 </h2>
 
                 <form onSubmit={submitComment} className="space-y-3 mb-5">
-                  <input required className="input-field" placeholder="Your name" value={comment.donorName} onChange={(e) => setComment({ ...comment, donorName: e.target.value })} />
-                  <input className="input-field" type="email" placeholder="Email optional" value={comment.donorEmail} onChange={(e) => setComment({ ...comment, donorEmail: e.target.value })} />
-                  <textarea required className="input-field min-h-24" placeholder="Write a message" value={comment.commentText} onChange={(e) => setComment({ ...comment, commentText: e.target.value })} />
+                  <label htmlFor="comment-name" className="sr-only">Your name</label>
+                  <input id="comment-name" name="name" autoComplete="name" required className="input-field" placeholder="Your name" value={comment.donorName} onChange={(e) => setComment({ ...comment, donorName: e.target.value })} />
+                  <label htmlFor="comment-email" className="sr-only">Email address, optional</label>
+                  <input id="comment-email" name="email" autoComplete="email" className="input-field" type="email" placeholder="Email optional" value={comment.donorEmail} onChange={(e) => setComment({ ...comment, donorEmail: e.target.value })} />
+                  <label htmlFor="comment-message" className="sr-only">Comment</label>
+                  <textarea id="comment-message" name="comment" required className="input-field min-h-24" placeholder="Write a message" value={comment.commentText} onChange={(e) => setComment({ ...comment, commentText: e.target.value })} />
                   <button className="inline-flex items-center gap-2 rounded-lg bg-brand-green px-4 py-2 text-sm font-semibold text-white">
                     Submit <Send className="w-4 h-4" />
                   </button>
-                  {commentMessage && <p className="text-sm text-gray-600">{commentMessage}</p>}
+                  {commentMessage && <p role="status" aria-live="polite" className="text-sm text-gray-600">{commentMessage}</p>}
                 </form>
 
                 <div className="space-y-3">

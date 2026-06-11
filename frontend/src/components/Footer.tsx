@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-brand-green text-white">
       <div className="absolute inset-0">
-        <img src="/beautiful-cow.png" alt="" className="h-full w-full object-cover opacity-60" />
+        <img src="/beautiful-cow.webp" alt="" width="1024" height="1024" loading="lazy" decoding="async" className="h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-brand-green/80" />
       </div>
 
@@ -14,9 +14,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2">
             <Link to="/" className="inline-flex items-center gap-3 mb-5">
-              <img src="/logo_transparent.png" alt="Gau Seva Kendra Logo" className="object-contain h-20 md:h-24" />
+              <img src="/logo.webp" alt="Gau Seva Kendra" width="380" height="380" loading="lazy" decoding="async" className="object-contain h-20 md:h-24" />
             </Link>
-            <p className="max-w-md text-sm leading-7 text-white/75">
+            <p className="max-w-md text-sm leading-7 text-white/80">
               A donation and care management platform for animal rescue, campaign transparency, expenses, and secure donor receipts.
             </p>
             <Link to="/donate" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-orange px-5 py-3 text-sm font-bold text-white hover:bg-orange-700">
@@ -26,7 +26,7 @@ export default function Footer() {
 
           <div>
             <h3 className="mb-4 font-semibold text-brand-orange">Explore</h3>
-            <ul className="space-y-3 text-sm text-white/80">
+            <ul className="space-y-3 text-sm text-white/90">
               <li><Link to="/" className="hover:text-white">Home</Link></li>
               <li><Link to="/campaigns" className="hover:text-white">Campaigns</Link></li>
               <li><Link to="/donate" className="hover:text-white">Donate</Link></li>
@@ -37,13 +37,13 @@ export default function Footer() {
 
           <div>
             <h3 className="mb-4 font-semibold text-brand-orange">Legal & Trust</h3>
-            <ul className="space-y-3 text-sm text-white/80">
+            <ul className="space-y-3 text-sm text-white/90">
               <li><Link to="/terms" className="hover:text-white">Terms and Conditions</Link></li>
               <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
               <li><Link to="/refund" className="hover:text-white">Refund Policy</Link></li>
               <li><Link to="/donate" className="hover:text-white">Tax Receipt Flow</Link></li>
             </ul>
-            <div className="mt-5 flex items-start gap-2 rounded-lg bg-white/10 p-3 text-xs text-white/70">
+            <div className="mt-5 flex items-start gap-2 rounded-lg bg-white/10 p-3 text-xs text-white/85">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-orange" />
               <span>Payments are created and verified through backend APIs before receipts are shown.</span>
             </div>
@@ -51,7 +51,7 @@ export default function Footer() {
 
           <div>
             <h3 className="mb-4 font-semibold text-brand-orange">Contact</h3>
-            <ul className="space-y-4 text-sm text-white/80">
+            <ul className="space-y-4 text-sm text-white/90">
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-orange" />
                 <span>
@@ -77,7 +77,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-6 text-xs text-white/60 flex flex-col md:flex-row justify-between gap-4">
+        <div className="mt-12 border-t border-white/10 pt-6 text-xs text-white/80 flex flex-col md:flex-row justify-between gap-4">
           <p>&copy; {new Date().getFullYear()} Gau Seva Kendra. All Rights Reserved.</p>
           <div className="flex flex-wrap gap-4">
             <Link to="/terms" className="hover:text-white">Terms</Link>

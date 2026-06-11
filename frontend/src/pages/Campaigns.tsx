@@ -32,8 +32,7 @@ export default function Campaigns() {
 
   return (
     <div className="bg-brand-beige min-h-screen py-12">
-      <Helmet>
-        <title>Active Campaigns | Gau Seva Kendra</title>
+      <Helmet title="Active Campaigns | Gau Seva Kendra">
         <meta name="description" content="Support active rescue, treatment, and care campaigns at Gau Seva Kendra." />
       </Helmet>
 
@@ -48,8 +47,8 @@ export default function Campaigns() {
           </Link>
         </div>
 
-        {isLoading && <div className="bg-white rounded-xl border border-orange-100 p-8 text-center text-gray-500">Loading campaigns...</div>}
-        {error && <div className="bg-red-50 rounded-xl border border-red-100 p-4 text-red-700">{error}</div>}
+        {isLoading && <div role="status" aria-live="polite" className="bg-white rounded-xl border border-orange-100 p-8 text-center text-gray-500">Loading campaigns...</div>}
+        {error && <div role="alert" className="bg-red-50 rounded-xl border border-red-100 p-4 text-red-700">{error}</div>}
 
         {!isLoading && campaigns.length === 0 && !error && (
           <div className="bg-white rounded-xl border border-orange-100 p-8 text-center text-gray-600">
@@ -60,11 +59,11 @@ export default function Campaigns() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {campaigns.map((campaign) => {
             const percent = progressPercent(campaign);
-            const image = campaign.images?.[0]?.imageUrl || campaign.animal?.images?.[0]?.imageUrl || '/hero-cow-calf.png';
+            const image = campaign.images?.[0]?.imageUrl || campaign.animal?.images?.[0]?.imageUrl || '/hero-cow-calf.webp';
 
             return (
               <article key={campaign.id} className="bg-white rounded-xl border border-orange-100 shadow-sm overflow-hidden flex flex-col">
-                <img src={image} alt={campaign.titleEn} className="h-56 w-full object-cover" />
+                <img src={image} alt={campaign.titleEn} width="640" height="448" loading="lazy" decoding="async" className="h-56 w-full object-cover" />
                 <div className="p-5 flex-1 flex flex-col">
                   <h2 className="text-xl font-bold text-gray-900 mb-2">{campaign.titleEn}</h2>
                   <p className="text-sm text-gray-600 line-clamp-3 mb-5">{campaign.shortSummaryEn}</p>
@@ -74,7 +73,14 @@ export default function Campaigns() {
                       <span>{formatInr(campaign.raisedAmountPaise)}</span>
                       <span>{percent}%</span>
                     </div>
-                    <div className="h-2 rounded-full bg-orange-100 overflow-hidden">
+                    <div
+                      className="h-2 rounded-full bg-orange-100 overflow-hidden"
+                      role="progressbar"
+                      aria-label={`${campaign.titleEn} fundraising progress`}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={percent}
+                    >
                       <div className="h-full bg-brand-orange" style={{ width: `${percent}%` }} />
                     </div>
                     <p className="text-xs text-gray-500 mt-2">Goal: {formatInr(campaign.targetAmountPaise)}</p>
